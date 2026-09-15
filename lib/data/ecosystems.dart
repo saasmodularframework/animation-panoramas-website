@@ -4,7 +4,7 @@ import '../models/ecosystem.dart';
 final List<Ecosystem> ecosystems = [
   Ecosystem(
     slug: "jungle-forest",
-    title: "Jungle Forest",
+    title: "Scene 01",
     type: "3d",
     lat: -3.4653,
     lng: -62.2159,
@@ -20,12 +20,12 @@ final List<Ecosystem> ecosystems = [
   ),
   Ecosystem(
     slug: "ocean-floor",
-    title: "Ocean Floor",
+    title: "Scene 02",
     type: "3d",
     lat: -18.2871,
     lng: 147.6992,
     modelPath: "assets/assets/models/ocean-floor.glb",
-    description: "The seabed spans sunlit shallows to the pitch-black abyssal plain, supporting coral reefs and hydrothermal vents.",
+    description: "The ocean floor spans sunlit shallows to the pitch-black abyssal plain, supporting coral reefs and hydrothermal vents.",
     fact: "Less than a quarter of the ocean floor has been mapped in high resolution.",
     background: EcosystemBackground(top: Color(0xFF012a4a), bottom: Color(0xFF01497c)),
     cameraDistance: 9,
@@ -36,7 +36,7 @@ final List<Ecosystem> ecosystems = [
   ),
   Ecosystem(
     slug: "cloud-forest",
-    title: "Cloud Forest",
+    title: "Scene 03",
     type: "3d",
     lat: 10.3083,
     lng: -84.8144,
@@ -52,7 +52,7 @@ final List<Ecosystem> ecosystems = [
   ),
   Ecosystem(
     slug: "seagrass-meadow",
-    title: "Seagrass Meadow",
+    title: "Scene 04",
     type: "3d",
     lat: -25.4428,
     lng: 113.5585,
@@ -68,7 +68,7 @@ final List<Ecosystem> ecosystems = [
   ),
   Ecosystem(
     slug: "tropical-savanna",
-    title: "Tropical Savanna",
+    title: "Scene 05",
     type: "3d",
     lat: -2.3333,
     lng: 34.8333,
@@ -84,7 +84,7 @@ final List<Ecosystem> ecosystems = [
   ),
   Ecosystem(
     slug: "desert-fauna",
-    title: "Desert Fauna",
+    title: "Scene 06",
     type: "3d",
     lat: 25.0000,
     lng: 15.0000,
@@ -100,7 +100,7 @@ final List<Ecosystem> ecosystems = [
   ),
   Ecosystem(
     slug: "epiphytic-canopy",
-    title: "Epiphytic Canopy Ecosystem",
+    title: "Scene 07",
     type: "2d",
     lat: -16.1700,
     lng: 145.4180,
@@ -116,7 +116,7 @@ final List<Ecosystem> ecosystems = [
   ),
   Ecosystem(
     slug: "icebergs-drift",
-    title: "Large Icebergs Drift",
+    title: "Scene 08",
     type: "2d",
     lat: -75.0000,
     lng: -40.0000,
