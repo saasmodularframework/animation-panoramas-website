@@ -10,7 +10,7 @@ class EcosystemBackground {
 class Ecosystem {
   final String slug;
   final String title;
-  final String type; // "3d" | "2d"
+  final String type; 
   final double lat;
   final double lng;
   final String modelPath;
