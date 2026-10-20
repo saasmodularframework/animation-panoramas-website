@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import '../models/task_model.dart';
 import '../data/network/dio_client.dart';
 
-/// الشاشة الرئيسية للتطبيق المتغيرة
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -12,10 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // مفتاح عالمي لإدارة حالة القائمة المتحركة
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  
-  // مثيل عميل الشبكة لإدارة طلبات الخادم
   final DioClient _dioClient = DioClient();
   
   List<Task> _tasks = [];
@@ -27,16 +23,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // جلب المهام من الخادم فور بدء تشغيل الشاشة
     _fetchTasksFromApi();
   }
 
-  // دالة لجلب المهام من الخادم باستخدام عميل الشبكة
   Future<void> _fetchTasksFromApi() async {
     try {
       setState(() => _isLoading = true);
       
-      // تنفيذ طلب شبكة لجلب بيانات تجريبية
       final response = await _dioClient.instance.get('/todos?_limit=4');
       
       final List<dynamic> data = response.data;
@@ -62,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // دالة لإضافة مهمة جديدة ومزامنتها عبر طلب إرسال للخادم
   Future<void> _addTask() async {
     try {
       final newTask = Task(
@@ -89,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // دالة لحذف مهمة من القائمة مع تأثير الحركة
   void _removeTask(int index) {
     final removedItem = _tasks.removeAt(index);
     _listKey.currentState?.removeItem(
@@ -102,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // دالة لفتح واجهة اختيار الوقت
   Future<void> _pickTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -118,7 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // شريط التطبيق العلوي
       appBar: AppBar(
         title: const Text('أجندة المهام اليومية'),
         actions: [
@@ -132,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      // القائمة الجانبية المخفية
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -149,7 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      // محتوى الشاشة الرئيسي
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -157,7 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // أزرار مقسمة لاختيار فئة المهام
                   Center(
                     child: SegmentedButton<String>(
                       segments: const [
@@ -176,7 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   const LinearProgressIndicator(value: 0.65),
                   const Divider(height: 24, thickness: 2),
                   
-                  // صف تفعيل التذكيرات
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -189,7 +174,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 10),
 
-                  // صندوق مزخرف بنمط ملمس (Texture Pattern) وخلفية ملونة تماشياً مع Material 3
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
                     child: DecoratedBox(
@@ -269,7 +253,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Text('قائمة المهام (المزامنة عبر الشبكة):', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   
-                  // قائمة المهام المتحركة
                   Expanded(
                     child: AnimatedList(
                       key: _listKey,
@@ -299,14 +282,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-      // شريط التنقل السفلي
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'المهام'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'الإعدادات'),
         ],
       ),
-      // زر الإجراء العائم الممتد لإضافة مهمة
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
         label: const Text('إضافة مهمة'),
@@ -316,7 +297,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-/// رسم ملمس هندسي خفيف لإعطاء تأثير النسيج (Texture) للخلفية الملونة
 class TexturePatternPainter extends CustomPainter {
   final Color color;
 

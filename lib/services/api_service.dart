@@ -4,7 +4,6 @@ class ApiService {
   final Dio _dio = Dio();
   static final Map<String, Map<String, dynamic>> _cache = {};
 
-  // 1. Open-Meteo API: Fetches all 10 core weather metrics
   Future<Map<String, dynamic>?> fetchWeather(double lat, double lng) async {
     final cacheKey = "weather_${lat.toStringAsFixed(4)}_${lng.toStringAsFixed(4)}";
     if (_cache.containsKey(cacheKey)) {
@@ -33,7 +32,6 @@ class ApiService {
     return null;
   }
 
-  // 2. Sunrise-Sunset API: Computes precise sunrise and sunset timestamps
   Future<Map<String, dynamic>?> fetchSolarTimes(double lat, double lng) async {
     final cacheKey = "solar_${lat.toStringAsFixed(4)}_${lng.toStringAsFixed(4)}";
     if (_cache.containsKey(cacheKey)) {
@@ -62,7 +60,6 @@ class ApiService {
     return null;
   }
 
-  // 3. GBIF API: Queries geo-referenced species occurrence records
   Future<String?> fetchWildlifeSample(double lat, double lng) async {
     try {
       final response = await _dio.get(
