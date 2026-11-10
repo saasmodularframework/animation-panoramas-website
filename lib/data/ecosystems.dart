@@ -104,7 +104,7 @@ final List<Ecosystem> ecosystems = [
     type: "2d",
     lat: -16.1700,
     lng: 145.4180,
-    modelPath: "assets/assets/models/epiphytic-canopy.glb",
+    modelPath: "assets/assets/models/epiphytic--canopy.glb",
     description: "Epiphytes are plants growing harmlessly on other plants, gathering moisture and nutrients from air and rain.",
     fact: "A single large rainforest tree can host dozens of epiphyte species.",
     background: EcosystemBackground(top: Color(0xFF123524), bottom: Color(0xFF2e6b46)),
@@ -131,3 +131,4 @@ final List<Ecosystem> ecosystems = [
     spriteRows: 4,
   ),
 ];
+
