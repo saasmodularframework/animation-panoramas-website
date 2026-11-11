@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/ecosystem.dart';
 
-final List<Ecosystem> ecosystems = [
-  Ecosystem(
+List<Ecosystem> getEcosystems() => [
+  const Ecosystem(
     slug: "flora",
-    title: "Scene 01",
+    title: "Temperate Flora",
     type: "3d",
     lat: -3.4653,
     lng: -62.2159,
@@ -17,14 +17,14 @@ final List<Ecosystem> ecosystems = [
     spriteColumns: 6,
     spriteRows: 4,
   ),
-  Ecosystem(
+  const Ecosystem(
     slug: "subsurface-conveyance",
-    title: "Scene 02",
+    title: "Subsurface Conveyance",
     type: "3d",
     lat: -18.2871,
     lng: 147.6992,
     modelPath: "assets/assets/models/subsurface-conveyance.glb",
-    description: "The subsurface is spanned from sunlit shallows to the pitch-black abyssal plain, supporting coral reefs and hydrothermal vents being formed.",
+    description: "The subsurface spans from sunlit shallows to the pitch-black abyssal plain, supporting coral reefs and hydrothermal vents.",
     background: EcosystemBackground(top: Color(0xFF012a4a), bottom: Color(0xFF01497c)),
     cameraDistance: 9,
     spritePath: "assets/sprites/sprite-02.png",
@@ -32,14 +32,14 @@ final List<Ecosystem> ecosystems = [
     spriteColumns: 6,
     spriteRows: 4,
   ),
-  Ecosystem(
+  const Ecosystem(
     slug: "cloud-flora",
-    title: "Scene 03",
+    title: "Cloud Flora",
     type: "3d",
     lat: 10.3083,
     lng: -84.8144,
     modelPath: "assets/assets/models/cloud-flora.glb",
-    description: "High-elevation tropical flora  are situated within near-constant low-level cloud cover, with moisture-saturated conditions.",
+    description: "High-elevation tropical flora situated within near-constant low-level cloud cover, with moisture-saturated conditions.",
     background: EcosystemBackground(top: Color(0xFF3a4a4f), bottom: Color(0xFF7c9a92)),
     cameraDistance: 9,
     spritePath: "assets/sprites/sprite-03.png",
@@ -47,14 +47,14 @@ final List<Ecosystem> ecosystems = [
     spriteColumns: 6,
     spriteRows: 4,
   ),
-  Ecosystem(
+  const Ecosystem(
     slug: "seagrass-meadow",
-    title: "Scene 04",
+    title: "Seagrass Meadow",
     type: "3d",
     lat: -25.4428,
     lng: 113.5585,
     modelPath: "assets/assets/models/seagrass-meadow.glb",
-    description: "Seagrasses are flowering plants are lived fully submerged in seawater, stabilizing sediment and serving as marine nurseries being served.",
+    description: "Seagrasses are flowering plants fully submerged in seawater, stabilizing sediment and serving as marine nurseries.",
     background: EcosystemBackground(top: Color(0xFF023047), bottom: Color(0xFF219ebc)),
     cameraDistance: 10,
     spritePath: "assets/sprites/sprite-04.png",
@@ -62,14 +62,14 @@ final List<Ecosystem> ecosystems = [
     spriteColumns: 6,
     spriteRows: 4,
   ),
-  Ecosystem(
+  const Ecosystem(
     slug: "tropical-savanna",
-    title: "Scene 05",
+    title: "Tropical Savanna",
     type: "3d",
     lat: -2.3333,
     lng: 34.8333,
     modelPath: "assets/assets/models/tropical-savanna.glb",
-    description: "Savannas are grassland ecosystems in which drought-resistant trees are scattered and by which seasonal cycles are shaped.",
+    description: "Savannas are grassland ecosystems in which drought-resistant trees are scattered and seasonal cycles are shaped.",
     background: EcosystemBackground(top: Color(0xFF8d6a3f), bottom: Color(0xFFe0c068)),
     cameraDistance: 10,
     spritePath: "assets/sprites/sprite--05.png",
@@ -77,9 +77,9 @@ final List<Ecosystem> ecosystems = [
     spriteColumns: 6,
     spriteRows: 4,
   ),
-  Ecosystem(
+  const Ecosystem(
     slug: "desert-fauna",
-    title: "Scene 06",
+    title: "Desert Fauna",
     type: "3d",
     lat: 25.0000,
     lng: 15.0000,
@@ -92,14 +92,14 @@ final List<Ecosystem> ecosystems = [
     spriteColumns: 6,
     spriteRows: 4,
   ),
-  Ecosystem(
+  const Ecosystem(
     slug: "canopy-epiphytic",
-    title: "Scene 07",
+    title: "Canopy Epiphytic",
     type: "2d",
     lat: -16.1700,
     lng: 145.4180,
     modelPath: "assets/assets/models/canopy-epiphytic.glb",
-    description: "Epiphytes are plants that are grown harmlessly on other plants, with moisture and nutrients being gathered from air and rain.",
+    description: "Epiphytes are plants grown harmlessly on other plants, gathering moisture and nutrients from air and rain.",
     background: EcosystemBackground(top: Color(0xFF123524), bottom: Color(0xFF2e6b46)),
     cameraDistance: 6,
     spritePath: "assets/sprites/sprite--07.png",
@@ -108,4 +108,3 @@ final List<Ecosystem> ecosystems = [
     spriteRows: 4,
   ),
 ];
-

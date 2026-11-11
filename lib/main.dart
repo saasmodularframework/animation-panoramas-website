@@ -9,17 +9,15 @@ import 'widgets/ecosystem_sprite_loader.dart';
 import 'widgets/open_meteo_live_widget.dart';
 import 'widgets/animated_switcher_translation.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const EcosystemApp());
 }
 
-class EcosystemApp extends StatelessWidget {
+class EcosystemApp extends StatefulWidget {
   const EcosystemApp({super.key});
 
-@override
+  @override
   State<EcosystemApp> createState() => _EcosystemAppState();
 }
 
@@ -38,20 +36,6 @@ class _EcosystemAppState extends State<EcosystemApp> {
       debugShowCheckedModeBanner: false,
       title: 'Ecosystem Viewer',
       locale: _locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('es'),
-        Locale('de'),
-        Locale('hi'),
-        Locale('ar'),
-        Locale('fr'),
-      ],
       home: EcosystemHomeScreen(
         currentLocale: _locale,
         onLocaleChanged: _changeLocale,
@@ -92,10 +76,9 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
     'sunrise': '06:00:00 AM',
     'sunset': '06:00:00 PM',
     'specimen': 'Scanning...',
-    'status': 'SYNCING',
+    'status': 'ONLINE_SYNCHRONIZED',
   };
 
-  List<Map<String, dynamic>> _clickHouseLogs = [];
   final OlapApiService _olapApiService = OlapApiService();
 
   @override
@@ -106,9 +89,8 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
 
   Future<void> _loadParallelTelemetry() async {
     setState(() => _isFetchingLive = true);
-    final l10n = AppLocalizations.of(context)!;
-    final ecosystemList = getEcosystems(l10n);
-    final ecosystem = ecosystems[_currentIndex];
+    final ecosystemList = getEcosystems();
+    final ecosystem = ecosystemList[_currentIndex];
 
     final data = await _olapApiService.fetchEcosystemWithParallelAI(
       ecosystem.slug,
@@ -116,11 +98,8 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
       ecosystem.lng,
     );
 
-    final analyticsData = await _olapApiService.queryClickHouseAnalytics(ecosystem.slug);
-
     setState(() {
       _telemetryData = data;
-      _clickHouseLogs = analyticsData;
       _isFetchingLive = false;
     });
   }
@@ -148,201 +127,196 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final ecosystems = getEcosystems(l10n);
+    final ecosystems = getEcosystems();
     final ecosystem = ecosystems[_currentIndex];
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+    return Theme(
+      data: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: ecosystem.background.top,
           brightness: Brightness.dark,
         ),
       ),
-      builder: (context, child) {
-        final colorScheme = Theme.of(context).colorScheme;
-        final textTheme = Theme.of(context).textTheme;
-
-return Scaffold(
-      body: Stack(
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 800),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [ecosystem.background.top, ecosystem.background.bottom],
+      child: Scaffold(
+        body: Stack(
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 800),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [ecosystem.background.top, ecosystem.background.bottom],
+                ),
               ),
             ),
-          ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.4,
-              child: EcosystemSpriteLoader(
-                key: ValueKey(ecosystem.spritePath),
-                imagePath: ecosystem.spritePath,
-                totalFrames: ecosystem.spriteTotalFrames,
-                columns: ecosystem.spriteColumns,
-                rows: ecosystem.spriteRows,
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.4,
+                child: EcosystemSpriteLoader(
+                  key: ValueKey(ecosystem.spritePath),
+                  imagePath: ecosystem.spritePath,
+                  totalFrames: ecosystem.spriteTotalFrames,
+                  columns: ecosystem.spriteColumns,
+                  rows: ecosystem.spriteRows,
+                ),
               ),
             ),
-          ),
-          Positioned.fill(
-            child: ModelViewer(
-              key: ValueKey(ecosystem.slug),
-              src: ecosystem.modelPath,
-              alt: ecosystem.title,
-              autoRotate: true,
-              cameraControls: true,
-              backgroundColor: Colors.transparent,
+            Positioned.fill(
+              child: ModelViewer(
+                key: ValueKey(ecosystem.slug),
+                src: ecosystem.modelPath,
+                alt: ecosystem.title,
+                autoRotate: true,
+                cameraControls: true,
+                backgroundColor: Colors.transparent,
+              ),
             ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Card.outlined(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.4),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              child: Row(
-                                children: [
-                                  FaIcon(FontAwesomeIcons.globe, size: 12, color: Theme.of(context).colorScheme.primary),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    l10n.latLng(ecosystem.lat.toString(), ecosystem.lng.toString()),
-                                    style: TextStyle(fontFamily: 'monospace', color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Card.filled(
-                                color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.6),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  child: Row(
-                                    children: [
-                                      FaIcon(FontAwesomeIcons.leaf, size: 12, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        ecosystem.type == "3d" ? l10n.scene3d : l10n.scene2d,
-                                        style: TextStyle(letterSpacing: 0.8, color: Theme.of(context).colorScheme.onSecondaryContainer, fontSize: 11),
-                                      ),
-                                    ],
-                                  ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Card.outlined(
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                child: Row(
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.globe, size: 12, color: Theme.of(context).colorScheme.primary),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Lat: ${ecosystem.lat}, Lng: ${ecosystem.lng}',
+                                      style: TextStyle(fontFamily: 'monospace', color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              AnimatedSwitcherTranslation(
-                                currentLocale: widget.currentLocale,
-                                onLocaleChanged: widget.onLocaleChanged,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        ecosystem.title,
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface, letterSpacing: 0.5),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        ecosystem.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85), height: 1.3),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
-                        children: [
-                          OpenMeteoLiveWidget(
-                            weatherData: _telemetryData,
-                            isFetching: _isFetchingLive,
-                            onRefresh: _loadParallelTelemetry,
-                          ),
-                          const SizedBox(height: 10),
-                          GrafanaMcpDashboardWidget(
-                            telemetry: _telemetryData,
-                            isFetching: _isFetchingLive,
-                            onRefresh: _loadParallelTelemetry,
-                          ),
-                          const SizedBox(height: 10),
-                          TelemetryObservabilityWidget(
-                            clickHouseLogs: _clickHouseLogs,
-                            ecosystemData: _telemetryData,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FilledButton.tonalIcon(
-                            onPressed: () {
-                              setState(() {
-                                _currentIndex = (_currentIndex - 1 + ecosystems.length) % ecosystems.length;
-                              });
-                              _loadParallelTelemetry();
-                            },
-                            icon: const FaIcon(FontAwesomeIcons.chevronLeft, size: 12),
-                            label: Text(l10n.prev),
-                          ),
-                          const SizedBox(width: 12),
-                          SegmentedButton<int>(
-                            segments: List.generate(
-                              ecosystems.length,
-                              (index) => ButtonSegment<int>(
-                                value: index,
-                                label: Text(_toRoman(index + 1)),
-                              ),
                             ),
-                            selected: {_currentIndex},
-                            onSelectionChanged: _onSegmentSelected,
-                          ),
-                          const SizedBox(width: 12),
-                          FilledButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _currentIndex = (_currentIndex + 1) % ecosystems.length;
-                              });
-                              _loadParallelTelemetry();
-                            },
-                            icon: const FaIcon(FontAwesomeIcons.chevronRight, size: 12),
-                            label: Text(l10n.next),
-                          ),
-                        ],
+                            Row(
+                              children: [
+                                Card.filled(
+                                  color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.6),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    child: Row(
+                                      children: [
+                                        FaIcon(FontAwesomeIcons.leaf, size: 12, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          ecosystem.type.toUpperCase(),
+                                          style: TextStyle(letterSpacing: 0.8, color: Theme.of(context).colorScheme.onSecondaryContainer, fontSize: 11),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                AnimatedSwitcherTranslation(
+                                  currentLocale: widget.currentLocale,
+                                  onLocaleChanged: widget.onLocaleChanged,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          ecosystem.title,
+                          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface, letterSpacing: 0.5),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          ecosystem.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85), height: 1.3),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Column(
+                          children: [
+                            OpenMeteoLiveWidget(
+                              weatherData: _telemetryData,
+                              isFetching: _isFetchingLive,
+                              onRefresh: _loadParallelTelemetry,
+                            ),
+                            const SizedBox(height: 10),
+                            GrafanaMcpDashboardWidget(
+                              telemetry: _telemetryData,
+                              isFetching: _isFetchingLive,
+                              onRefresh: _loadParallelTelemetry,
+                            ),
+                            const SizedBox(height: 10),
+                            TelemetryObservabilityWidget(
+                              clickHouseLogs: const [],
+                              ecosystemData: _telemetryData,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Center(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FilledButton.tonalIcon(
+                              onPressed: () {
+                                setState(() {
+                                  _currentIndex = ((_currentIndex - 1 + ecosystems.length) % ecosystems.length).toInt();
+                                });
+                                _loadParallelTelemetry();
+                              },
+                              icon: const FaIcon(FontAwesomeIcons.chevronLeft, size: 12),
+                              label: const Text('Prev'),
+                            ),
+                            const SizedBox(width: 12),
+                            SegmentedButton<int>(
+                              segments: List.generate(
+                                ecosystems.length,
+                                (index) => ButtonSegment<int>(
+                                  value: index,
+                                  label: Text(_toRoman(index + 1)),
+                                ),
+                              ),
+                              selected: {_currentIndex},
+                              onSelectionChanged: _onSegmentSelected,
+                            ),
+                            const SizedBox(width: 12),
+                            FilledButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _currentIndex = ((_currentIndex + 1) % ecosystems.length).toInt();
+                                });
+                                _loadParallelTelemetry();
+                              },
+                              icon: const FaIcon(FontAwesomeIcons.chevronRight, size: 12),
+                              label: const Text('Next'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -15,7 +15,7 @@ class Ecosystem {
   final double lng;
   final String modelPath;
   final String description;
-  final String fact;
+  final String? fact;
   final EcosystemBackground background;
   final double cameraDistance;
   
