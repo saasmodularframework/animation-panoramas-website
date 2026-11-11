@@ -10,19 +10,25 @@ class AnimatedSwitcherTranslation extends StatelessWidget {
     required this.onLocaleChanged,
   });
 
-  static const Map<String, String> _languages = {
-    'en': 'EN',
-    'es': 'ES',
-    'de': 'DE',
-    'fr': 'FR',
-    'ar': 'AR',
-    'hi': 'HI',
-  };
+  static const List> _languages = [
+    {'code': 'en', 'label': 'English'},
+    {'code': 'es', 'label': 'Español'},
+    {'code': 'de', 'label': 'Deutsch'},
+    {'code': 'hi', 'label': 'हिन्दी'},
+    {'code': 'ar', 'label': 'العربية'},
+    {'code': 'fr', 'label': 'Français'},
+  ];
 
   @override
   Widget build(BuildContext context) {
+    // Find the current active language entry or fallback to English
+    final activeLang = _languages.firstWhere(
+      (lang) => lang['code'] == currentLocale.languageCode,
+      orElse: () => _languages.first,
+    );
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.5),
         borderRadius: BorderRadius.circular(20),
@@ -30,20 +36,27 @@ class AnimatedSwitcherTranslation extends StatelessWidget {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: currentLocale.languageCode,
+          value: activeLang['code'],
           dropdownColor: Colors.black87,
-          icon: const Icon(Icons.language, size: 16, color: Colors.lightBlueAccent),
+          icon: const Padding(
+            padding: EdgeInsets.only(left: 6),
+            child: Icon(Icons.language, size: 16, color: Colors.lightBlueAccent),
+          ),
           selectedItemBuilder: (BuildContext context) {
-            return _languages.keys.map((String code) {
-              return Center(
+            return _languages.map((lang) {
+              return Align(
+                alignment: Alignment.centerLeft,
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   transitionBuilder: (Widget child, Animation<double> animation) {
-                    return ScaleTransition(scale: animation, child: FadeTransition(opacity: animation, child: child));
+                    return ScaleTransition(
+                      scale: animation,
+                      child: FadeTransition(opacity: animation, child: child),
+                    );
                   },
                   child: Text(
-                    _languages[code]!,
-                    key: ValueKey<String>(code),
+                    lang['label']!,
+                    key: ValueKey<String>(lang['code']!),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -54,14 +67,16 @@ class AnimatedSwitcherTranslation extends StatelessWidget {
               );
             }).toList();
           },
-          items: _languages.entries.map((entry) {
+          items: _languages.map((lang) {
+            final isSelected = activeLang['code'] == lang['code'];
             return DropdownMenuItem<String>(
-              value: entry.key,
+              value: lang['code'],
               child: Text(
-                entry.value,
+                lang['label']!,
                 style: TextStyle(
-                  color: currentLocale.languageCode == entry.key ? Colors.lightBlueAccent : Colors.white70,
+                  color: isSelected ? Colors.lightBlueAccent : Colors.white70,
                   fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
             );
