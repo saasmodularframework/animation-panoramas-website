@@ -57,6 +57,7 @@ class _EcosystemSpriteLoaderState extends State<EcosystemSpriteLoader> {
     return IgnorePointer(
       child: SpriteSheetAnimator(
         image: _loadedImage!,
+        assetName: widget.imagePath,
         totalFrames: widget.totalFrames,
         columns: widget.columns,
         rows: widget.rows,
@@ -65,3 +66,5 @@ class _EcosystemSpriteLoaderState extends State<EcosystemSpriteLoader> {
     );
   }
 }
+
+

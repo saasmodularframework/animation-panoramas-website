@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
-/// Configuration data class for sprite sheets
 class SpriteConfig {
   final int columns;
   final int rows;
@@ -16,11 +15,10 @@ class SpriteConfig {
 
 class SpriteSheetAnimator extends StatefulWidget {
   final ui.Image image;
-  final String assetName; // Used to look up the exact grid ratio automatically
+  final String assetName;
   final Duration duration;
   final BoxFit fit;
 
-  // Optional manual overrides if needed
   final int? columns;
   final int? rows;
   final int? totalFrames;
@@ -36,7 +34,6 @@ class SpriteSheetAnimator extends StatefulWidget {
     this.totalFrames,
   }) : super(key: key);
 
-  /// Centralized mapping of exact grid ratios for each specific sprite sheet filename
   static const Map<String, SpriteConfig> spriteRegistry = {
     'sprite-01.png': SpriteConfig(columns: 5, rows: 3, totalFrames: 15),
     'sprite-02.png': SpriteConfig(columns: 4, rows: 6, totalFrames: 24),
@@ -82,10 +79,7 @@ class _SpriteSheetAnimatorState extends State<SpriteSheetAnimator>
   }
 
   SpriteConfig _resolveConfig() {
-    // Extract filename from path if a full asset path like 'assets/sprites/sprite-01.png' is passed
     String cleanKey = widget.assetName.split('/').last;
-
-    // Fallback to registry configuration or defaults if not found
     SpriteConfig config = SpriteSheetAnimator.spriteRegistry[cleanKey] ??
         const SpriteConfig(columns: 4, rows: 4, totalFrames: 16);
 
