@@ -32,7 +32,7 @@ class Ecosystem {
     required this.lng,
     required this.modelPath,
     required this.description,
-    required this.fact,
+    this.fact,
     required this.background,
     required this.cameraDistance,
     required this.spritePath,
