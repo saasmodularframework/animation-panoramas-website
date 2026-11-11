@@ -65,7 +65,7 @@ class AnimatedSwitcherTranslation extends StatelessWidget {
                 ),
               ),
             );
-          }).onTap as void Function()?,
+          }).toList(),
           onChanged: (String? newCode) {
             if (newCode != null) {
               onLocaleChanged(Locale(newCode));
