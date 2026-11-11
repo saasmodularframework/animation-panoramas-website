@@ -77,7 +77,7 @@ class TelemetryObservabilityWidget extends StatelessWidget {
               const SizedBox(height: 16),
 
               Text(
-                'ClickHouse OLAP Query Execution States',
+                'Columnar OLAP Query',
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: colorScheme.onSurface,
