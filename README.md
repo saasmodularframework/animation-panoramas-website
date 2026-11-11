@@ -5,9 +5,9 @@ An advanced, responsive 3D and 2D ecosystem and panorama explorer built with Flu
 ## Key Features
 
 - **3D & 2D Biome Navigation**: Switch dynamically between global environments like Jungle Forests, Ocean Floors, Cloud Forests, and Seagrass Meadows.
-- **Transparent Sprite Sheet Overlays**: Dynamic multi-frame sprite animations (`sprite-01.png` to `sprite-08.png`) mapped smoothly behind 3D models with transparent alpha channels.
+- **Transparent Sprite Sheet Overlays**: Dynamic multi-frame sprite animations (`sprite-01.png` to `sprite-06.png`) mapped smoothly behind 3D models with transparent alpha channels.
 - **Parallel.ai Agent Search Integration**: Real-time concurrent multi-stream queries (`Future.wait`) combining Open-Meteo weather forecasts and Parallel.ai agent deep-research search payloads.
-- **ClickHouse Columnar Database & Grafana MCP**: High-throughput analytical logging and metrics processed via a containerized ClickHouse OLAP backend and visualized through a half-transparent glassmorphism dashboard HUD.
+- **Columnar Database & Grafana MCP**: High-throughput analytical logging and metrics processed via a containerized OLAP backend and visualized through a half-transparent glassmorphism dashboard HUD.
 - **Cross-Platform Web Ready**: Fully optimized for modern web browsers with responsive layout scaling.
 
 ## Tech Stack
@@ -16,7 +16,7 @@ An advanced, responsive 3D and 2D ecosystem and panorama explorer built with Flu
 - **Language**: [Dart](https://dart.dev)
 - **3D Rendering**: `model_viewer_plus` (Google Model Viewer wrapper)
 - **Networking & Concurrency**: `dio` with asynchronous parallel stream handling (`Future.wait`)
-- **AI & Analytics**: Parallel.ai Search API, Open-Meteo API, ClickHouse Columnar DB, Grafana MCP Server
+- **AI & Analytics**: Parallel.ai Search API, Open-Meteo API, Columnar DB, Grafana MCP Server
 - **Icons & Styling**: `font_awesome_flutter`, custom `CustomPainter` glassmorphism widgets
 
 ## Project Structure
@@ -24,8 +24,8 @@ An advanced, responsive 3D and 2D ecosystem and panorama explorer built with Flu
 ```
 animation-panoramas-website/
 ├── assets/
-│   ├── models/            # .glb 3D asset files (jungle-forest.glb, etc.)
-│   └── sprites/sprite-01.png...8  # Multi-frame animated biome sprite sheets
+│   ├── models/            # .glb 3D asset files
+│   └── sprites/           # multi-frame sprite sheets
 ├── lib/
 │   ├── data/
 │   │   └── ecosystems.dart     # Biome definitions, coords, and metadata mappings
@@ -33,22 +33,22 @@ animation-panoramas-website/
 │   │   └── ecosystem.dart      # Core data models and background schemas
 │   ├── services/
 │   │   ├── api_service.dart    # Legacy telemetry connectors
-│   │   └── olap_service.dart   # Parallel.ai & ClickHouse concurrent analytics connector
+│   │   └── olap_service.dart   # Parallel.ai concurrent analytics
 │   ├── widgets/
 │   │   ├── grafana_mcp_dashboard_widget.dart # Frosted glassmorphism HUD dashboard
 │   │   └── sprite_sheet_animator.dart        # Custom sprite painter & controller
 │   └── main.dart               # Main app entry point and state coordinator
 ├── web/
 │   └── index.html         # Web host template containing model-viewer scripts
-├── docker-compose.yml     # ClickHouse & Grafana MCP container cluster configuration
-├── schema.sql             # ClickHouse columnar analytical table definitions
+├── docker-compose.yml     # Grafana MCP container cluster configuration
+├── schema.sql             # columnar analytical table definitions
 ├── pubspec.yaml           # Project dependencies and asset declarations
 └── README.md
 ```
 
 ## Local Deployment & Docker Services
 
-To spin up the local ClickHouse OLAP database and Grafana MCP server infrastructure:
+To spin up the local OLAP database and Grafana MCP server infrastructure:
 
 ```bash
 docker-compose up -d
