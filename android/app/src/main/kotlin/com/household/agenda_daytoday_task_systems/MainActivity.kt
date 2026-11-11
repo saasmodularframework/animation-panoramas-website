@@ -1,4 +1,4 @@
-package com.household.agenda_daytoday_task_systems
+package com.household.animations_panoramas_website
 
 import io.flutter.embedding.android.FlutterActivity
 

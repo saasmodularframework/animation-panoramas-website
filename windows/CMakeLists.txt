@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(agenda_daytoday_task_systems LANGUAGES CXX)
+project(animations_panoramas_website LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "agenda_daytoday_task_systems")
+set(BINARY_NAME "animations_panoramas_website")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
