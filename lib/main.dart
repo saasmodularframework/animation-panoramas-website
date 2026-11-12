@@ -36,6 +36,14 @@ class _EcosystemAppState extends State<EcosystemApp> {
       debugShowCheckedModeBanner: false,
       title: 'Ecosystem Viewer',
       locale: _locale,
+      supportedLocales: const [
+        Locale('en'),
+        Locale('es'),
+        Locale('de'),
+        Locale('fr'),
+        Locale('ar'),
+        Locale('hi'),
+      ],
       home: EcosystemHomeScreen(
         currentLocale: _locale,
         onLocaleChanged: _changeLocale,
@@ -321,3 +329,4 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
     );
   }
 }
+
