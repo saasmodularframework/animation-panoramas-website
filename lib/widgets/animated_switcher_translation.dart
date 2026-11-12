@@ -10,7 +10,8 @@ class AnimatedSwitcherTranslation extends StatelessWidget {
     required this.onLocaleChanged,
   });
 
-  static const List> _languages = [
+  // Using a dynamic list definition to completely eliminate angle bracket compilation bugs
+  static const List _languages = [
     {'code': 'en', 'label': 'English'},
     {'code': 'es', 'label': 'Español'},
     {'code': 'de', 'label': 'Deutsch'},
@@ -21,7 +22,6 @@ class AnimatedSwitcherTranslation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Find the current active language entry or fallback to English
     final activeLang = _languages.firstWhere(
       (lang) => lang['code'] == currentLocale.languageCode,
       orElse: () => _languages.first,
