@@ -1,7 +1,7 @@
 name: ecosystem_viewer
-description: Flutter application replicating the React ecosystem 3D/2D viewer.
+description: Ecosystem panoramas viewer (multi-page).
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -11,14 +11,47 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  intl: ^0.20.3
   dio: ^5.4.0
   model_viewer_plus: ^1.7.0
   font_awesome_flutter: ^11.0.0
-  intl: ^0.20.3
+  navbar_router: ^0.7.7
+  flutter_breadcrumb: ^1.0.1
+  auto_size_text: ^3.0.0
+  iconify_flutter_plus: ^1.0.4
+  circular_gradient_spinner: ^0.0.3
+  qr: ^4.0.1
+  time: ^2.1.6
+  timeago: ^3.7.1
+  flutter_carousel_widget: ^4.0.1
+  extended_image: ^10.1.0
+  video_player: ^2.9.0
+  vimeo_video_player: ^1.0.3
+  flutter_inappwebview: ^6.1.5
+  flutter_number_flow: ^0.1.0
+  flutter_time_picker_spinner: ^2.0.0
+  wheel_spinner: ^0.7.3
+  sleek_circular_slider: ^2.1.0
+  flutter_expandable_table: ^2.3.0
+  flutter_tabler_icons: ^1.43.0
+  table_calendar: ^3.3.0
+  sqflite: ^2.4.6
+  sqflite_common_ffi: ^2.3.0
+  sqflite_common_ffi_web: ^1.0.0
+  path: ^1.9.0
+  crypto: ^3.0.3
+  graphic: ^2.7.0
+  dart_rss: ^3.0.3
+  pdf: ^3.11.0
+  printing: ^5.13.0
+  social_sharing_plus: ^1.2.3
+  flutter_social_share_plugin: ^2.1.4
 
 flutter:
   uses-material-design: true
-  generate: true
   assets:
     - assets/models/
     - assets/sprites/
+    - assets/videos/     

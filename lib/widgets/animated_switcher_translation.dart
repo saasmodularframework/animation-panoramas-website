@@ -1,93 +1,62 @@
 import 'package:flutter/material.dart';
+import '../app_state.dart';
+import '../l10n/app_strings.dart';
 
 class AnimatedSwitcherTranslation extends StatelessWidget {
-  final Locale currentLocale;
-  final ValueChanged<Locale> onLocaleChanged;
-
-  const AnimatedSwitcherTranslation({
-    super.key,
-    required this.currentLocale,
-    required this.onLocaleChanged,
-  });
-
-  // Using a dynamic list definition to completely eliminate angle bracket compilation bugs
-  static const List _languages = [
-    {'code': 'en', 'label': 'English'},
-    {'code': 'es', 'label': 'Español'},
-    {'code': 'de', 'label': 'Deutsch'},
-    {'code': 'hi', 'label': 'हिन्दी'},
-    {'code': 'ar', 'label': 'العربية'},
-    {'code': 'fr', 'label': 'Français'},
-  ];
+  const AnimatedSwitcherTranslation({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final activeLang = _languages.firstWhere(
-      (lang) => lang['code'] == currentLocale.languageCode,
-      orElse: () => _languages.first,
-    );
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: activeLang['code'],
-          dropdownColor: Colors.black87,
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 6),
-            child: Icon(Icons.language, size: 16, color: Colors.lightBlueAccent),
+    final current = Localizations.localeOf(context);
+    return PopupMenuButton<Locale>(
+      tooltip: 'Language',
+      initialValue: current,
+      onSelected: (l) => AppState.locale.value = l,
+      itemBuilder: (_) => [
+        for (final l in AppStrings.supported)
+          PopupMenuItem<Locale>(
+            value: l,
+            child: Row(children: [
+              Icon(l == current ? Icons.check : Icons.language, size: 18),
+              const SizedBox(width: 8),
+              Text(AppStrings.names[l.languageCode]!),
+            ]),
           ),
-          selectedItemBuilder: (BuildContext context) {
-            return _languages.map((lang) {
-              return Align(
-                alignment: Alignment.centerLeft,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  transitionBuilder: (Widget child, Animation<double> animation) {
-                    return ScaleTransition(
-                      scale: animation,
-                      child: FadeTransition(opacity: animation, child: child),
-                    );
-                  },
-                  child: Text(
-                    lang['label']!,
-                    key: ValueKey<String>(lang['code']!),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              );
-            }).toList();
-          },
-          items: _languages.map((lang) {
-            final isSelected = activeLang['code'] == lang['code'];
-            return DropdownMenuItem<String>(
-              value: lang['code'],
-              child: Text(
-                lang['label']!,
-                style: TextStyle(
-                  color: isSelected ? Colors.lightBlueAccent : Colors.white70,
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            );
-          }).toList(),
-          onChanged: (String? newCode) {
-            if (newCode != null) {
-              onLocaleChanged(Locale(newCode));
-            }
-          },
-        ),
+      ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.translate, size: 20),
+          const SizedBox(width: 4),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(current.languageCode.toUpperCase(), key: ValueKey(current.languageCode)),
+          ),
+        ]),
       ),
+    );
+  }
+}
+
+class DayNightSwitch extends StatelessWidget {
+  const DayNightSwitch({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: AppState.themeMode,
+      builder: (_, mode, __) {
+        final dark = mode == ThemeMode.dark;
+        return Tooltip(
+          message: context.tr('dark'),
+          child: Switch(
+            value: dark,
+            thumbIcon: WidgetStateProperty.resolveWith(
+                (s) => Icon(s.contains(WidgetState.selected) ? Icons.nightlight_round : Icons.wb_sunny)),
+            onChanged: (v) => AppState.themeMode.value = v ? ThemeMode.dark : ThemeMode.light,
+          ),
+        );
+      },
     );
   }
 }
