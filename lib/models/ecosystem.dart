@@ -15,7 +15,7 @@ class Ecosystem {
   final double lng;
   final String modelPath;
   final String description;
-  final String fact;
+  final String? fact;
   final EcosystemBackground background;
   final double cameraDistance;
   
@@ -32,7 +32,7 @@ class Ecosystem {
     required this.lng,
     required this.modelPath,
     required this.description,
-    required this.fact,
+    this.fact,
     required this.background,
     required this.cameraDistance,
     required this.spritePath,

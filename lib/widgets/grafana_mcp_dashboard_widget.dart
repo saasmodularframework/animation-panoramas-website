@@ -61,7 +61,7 @@ class GrafanaMcpDashboardWidget extends StatelessWidget {
             children: [
               _buildOLAPMetricCard("Sunrise", "${telemetry['sunrise']}", Icons.wb_sunny),
               _buildOLAPMetricCard("Sunset", "${telemetry['sunset']}", Icons.nights_stay),
-              _buildOLAPMetricCard("Node Status", "${telemetry['status']}", Icons.bolt),
+              _buildOLAPMetricCard("Node State", "${telemetry['status']}", Icons.bolt),
             ],
           ),
           const SizedBox(height: 10),
