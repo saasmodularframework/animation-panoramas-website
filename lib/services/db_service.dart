@@ -6,7 +6,10 @@ import 'package:sqflite/sqflite.dart';
 
 class Db {
   static Database? _d;
-  static Future<Database> get db async => _d ??= await _open();
+  static Future<Database> get db async =>
+      _d ??= await _open().timeout(const Duration(seconds: 8),
+          onTimeout: () => throw Exception(
+              'SQLite did not start. On web run: dart run sqflite_common_ffi_web:setup'));
 
   static Future<Database> _open() async {
     final path = join(await getDatabasesPath(), 'panoramas.db');
