@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-olap-server
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=secure_password
+      - CLICKHOUSE_DB=ecosystem_analytics
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - clickhouse
+
+  clickhouse-mcp:
+    image: python:3.11-slim
+    container_name: clickhouse-mcp-server
+    command: >
+      bash -c "pip install mcp-clickhouse &&
+               export CLICKHOUSE_HOST=clickhouse &&
+               export CLICKHOUSE_USER=default &&
+               export CLICKHOUSE_PASSWORD=secure_password &&
+               export CLICKHOUSE_DATABASE=ecosystem_analytics &&
+               export CLICKHOUSE_READONLY=true &&
+               mcp-clickhouse"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - clickhouse
+
+volumes:
+  clickhouse_data:
