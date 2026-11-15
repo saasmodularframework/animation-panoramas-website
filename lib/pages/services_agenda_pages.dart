@@ -113,7 +113,11 @@ class _AgendaPageState extends State<AgendaPage> {
     }
     setState(() => _busy = true);
     final when = DateTime(_selected.year, _selected.month, _selected.day, _time.hour, _time.minute);
-    await Db.addBooking(_service!, when, _note.text.trim());
+    try {
+      await Db.addBooking(_service!, when, _note.text.trim());
+    } catch (e) {
+      debugPrint('Booking DB error: $e');
+    }
     if (!mounted) return;
     setState(() => _busy = false);
     openPage(context, 'chart'); 

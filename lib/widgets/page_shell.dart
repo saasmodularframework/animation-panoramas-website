@@ -179,7 +179,13 @@ class QrBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final img = QrImage(QrCode(0, QrErrorCorrectLevel.L));
+    QrImage? img;
+    try {
+      img = QrImage(QrCode.fromData(data: data, errorCorrectLevel: QrErrorCorrectLevel.L));
+    } catch (e) {
+      debugPrint('QR error: $e');
+    }
+    if (img == null) return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), boxShadow: const [BoxShadow(blurRadius: 4, color: Colors.black26)]),

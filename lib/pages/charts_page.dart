@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:ui' as ui show TextDirection;
 import 'package:graphic/graphic.dart';
 import 'package:intl/intl.dart';
 
@@ -27,7 +28,12 @@ class _ChartsPageState extends State<ChartsPage> {
   }
 
   Future<void> _load() async {
-    final b = await Db.bookings();
+    var b = <Map<String, Object?>>[];
+    try {
+      b = await Db.bookings();
+    } catch (e) {
+      debugPrint('Bookings DB error: $e');
+    }
     var r = <Row_>[
       for (final x in b)
         {
@@ -239,7 +245,7 @@ class _Columns3D extends CustomPainter {
       canvas.drawPath(side, Paint()..color = Color.lerp(color, Colors.black, 0.35)!);
       final tp = TextPainter(
   text: TextSpan(text: labels[i], style: const TextStyle(fontSize: 9, color: Colors.grey)), 
-  textDirection: TextDirection.ltr,
+  textDirection: ui.TextDirection.ltr,
 )..layout();
       tp.paint(canvas, Offset(x, s.height - 14));
     }

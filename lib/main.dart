@@ -123,6 +123,14 @@ class NotFoundPage extends StatelessWidget {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = (d) => debugPrint('FlutterError: ${d.exceptionAsString()}\n${d.stack}');
+  ErrorWidget.builder = (d) => Material(
+        color: Colors.red.shade900,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: SingleChildScrollView(child: Text(d.exceptionAsString(), style: const TextStyle(color: Colors.white, fontSize: 11))),
+        ),
+      );
   usePathUrlStrategy(); 
   if (kIsWeb) {
     databaseFactory = databaseFactoryFfiWeb; 

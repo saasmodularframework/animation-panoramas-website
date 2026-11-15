@@ -25,7 +25,7 @@ static const supported = [
     'fr': 'Français',
   };
 
-  static const languages = >[
+  static const List<Map<String, String>> languages = [
     {'code': 'en', 'label': 'English'},
     {'code': 'es', 'label': 'Español'},
     {'code': 'de', 'label': 'Deutsch'},

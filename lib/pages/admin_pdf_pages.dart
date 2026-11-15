@@ -56,10 +56,17 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   @override
   void initState() {
     super.initState();
-    Db.hasAdmin().then((h) => mounted ? setState(() {
-          _first = !h; 
-          _busy = false;
-        }) : null);
+    Db.hasAdmin().then((h) {
+      if (mounted) setState(() {
+            _first = !h;
+            _busy = false;
+          });
+    }).catchError((Object e) {
+      if (mounted) setState(() {
+            _busy = false;
+            _err = 'Database unavailable: $e';
+          });
+    });
   }
 
   Future<void> _submit() async {
@@ -68,8 +75,13 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       return;
     }
     setState(() => _busy = true);
-    if (_first) await Db.createAdmin(_n.text.trim(), _p.text);
-    final ok = await Db.verifyAdmin(_n.text.trim(), _p.text);
+    var ok = false;
+    try {
+      if (_first) await Db.createAdmin(_n.text.trim(), _p.text);
+      ok = await Db.verifyAdmin(_n.text.trim(), _p.text);
+    } catch (e) {
+      debugPrint('Admin DB error: $e');
+    }
     if (!mounted) return;
     setState(() {
       _busy = false;

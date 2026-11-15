@@ -22,7 +22,12 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Future<void> _load() async {
-    final r = await Db.notes();
+    var r = <Map<String, Object?>>[];
+    try {
+      r = await Db.notes();
+    } catch (e) {
+      debugPrint('Notes DB error: $e');
+    }
     if (mounted) setState(() {
           _rows = r;
           _busy = false;
@@ -43,7 +48,11 @@ class _NotesPageState extends State<NotesPage> {
       ),
     );
     if (ok == true && t.text.trim().isNotEmpty) {
-      await Db.addNote(t.text.trim(), b.text.trim());
+      try {
+        await Db.addNote(t.text.trim(), b.text.trim());
+      } catch (e) {
+        debugPrint('Add note error: $e');
+      }
       _load();
     }
   }

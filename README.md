@@ -91,3 +91,18 @@ To run the Flutter Web application locally:
 flutter pub get
 flutter run -d chrome
 ```
+
+## Web build: required SQLite files
+
+`sqflite_common_ffi_web` needs two files in `web/` or every database page
+(Notes, Chart, Coding Agenda, Admin) shows the loading spinner forever.
+Run once from the project root, then rebuild:
+
+```
+dart run sqflite_common_ffi_web:setup
+flutter build web --release
+```
+
+
+
+
