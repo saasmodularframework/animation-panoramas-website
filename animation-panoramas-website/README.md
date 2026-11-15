@@ -103,3 +103,4 @@ dart run sqflite_common_ffi_web:setup
 flutter build web --release
 ```
 
+
