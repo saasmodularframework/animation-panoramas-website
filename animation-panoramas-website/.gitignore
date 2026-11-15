@@ -1,0 +1,24 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+.DS_Store
+.history
+
+# IntelliJ / VS Code
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Flutter / Dart specific
+.dart_tool/
+.pub-cache/
+.pub/
+build/
+
+# Symbol files / generated assets
+app.dill
+.flutter-plugins
+.flutter-plugins-dependencies
