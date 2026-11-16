@@ -71,7 +71,7 @@ class _AboutPageState extends State<AboutPage> {
           SizedBox(width: 260, child: _stat('Mobile applications shipped', _apps, Icons.phone_android)),
         ]),
         const SizedBox(height: 16),
-        ShareBar(text: 'Ecosystem Viewer $baseUrl/about'),
+        ShareBar(text: 'Ecosystem Viewer', url: '$baseUrl/about'),
       ]),
     );
   }
@@ -91,7 +91,7 @@ class ContactPage extends StatelessWidget {
         const ListTile(leading: Icon(Icons.phone), title: Text('+00 000 000 000')),
         const SizedBox(height: 8),
         Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-          ShareBar(text: 'Ecosystem Viewer $baseUrl'),
+          ShareBar(text: 'Ecosystem Viewer', url: baseUrl),
           IconButton.filledTonal(
             tooltip: context.tr('rss'),
             icon: const Iconify(Mdi.rss, size: 22),

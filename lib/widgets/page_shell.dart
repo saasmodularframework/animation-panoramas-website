@@ -53,7 +53,13 @@ class _PageShellState extends State<PageShell> {
     final trail = [context.tr('home'), ...widget.crumbs];
     return Scaffold(
       appBar: AppBar(
-        leading: Navigator.of(context).canPop() ? const BackButton() : null,
+        leading: Navigator.of(context).canPop()
+            ? const BackButton()
+            : IconButton(
+                tooltip: context.tr('home'),
+                icon: const Icon(Icons.home),
+                onPressed: () => Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil('/', (_) => false),
+              ),
         title: Row(children: [
           const Iconify(Mdi.panorama_horizontal, size: 22),
           const SizedBox(width: 8),
@@ -80,7 +86,7 @@ class _PageShellState extends State<PageShell> {
               const DateClock(),
               const SizedBox(width: 12),
               Flexible(
-                child: Text('Lat: ${eco.lat}, Lng: ${eco.lng}',
+                child: Text(AppStrings.of(context).tf('latLng', {'lat': eco.lat, 'lng': eco.lng}),
                     overflow: TextOverflow.ellipsis, style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
               ),
             ]),
@@ -98,7 +104,7 @@ class _PageShellState extends State<PageShell> {
                     onTap: i == trail.length - 1
                         ? null
                         : () => i == 0
-                            ? Navigator.of(context, rootNavigator: true).popUntil((r) => r.isFirst)
+                            ? Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil('/', (_) => false)
                             : Navigator.of(context).maybePop(),
                   ),
               ],

@@ -88,10 +88,10 @@ class SceneDetailPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 100, 16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(e.description),
+            Text(context.sceneDesc(e.slug)),
             if (e.fact != null) Padding(padding: const EdgeInsets.only(top: 6), child: Text(e.fact!, style: const TextStyle(fontStyle: FontStyle.italic))),
             const SizedBox(height: 8),
-            ShareBar(text: '${e.title} – ${e.description} $baseUrl/scene/${e.slug}'),
+            ShareBar(text: '${e.title} – ${context.sceneDesc(e.slug)}', url: '$baseUrl/scene/${e.slug}'),
           ]),
         ),
       ]),
