@@ -1,0 +1,92 @@
+import 'package:flutter/material.dart';
+import '../widgets/structured_table.dart';
+
+class PrecipitationPage extends StatelessWidget {
+  const PrecipitationPage({super.key});
+
+  static const double _globalMean = 2.69; // mm/day, long-term global average
+  static const _years = <int, double>{
+    2015: 0.03, 2016: 0.04, 2017: 0.01, 2018: -0.01, 2019: 0.02, 2020: 0.03,
+    2021: -0.02, 2022: -0.03, 2023: 0.00, 2024: 0.02, 2025: -0.02,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final blue = Colors.blue.shade700;
+
+    return PageShell(
+      title: 'Precipitation',
+      variable: 'Global precipitation anomaly by year',
+      icon: Icons.water_drop,
+      color: blue,
+      children: [
+
+        TableCard(
+          title: 'Anomaly by year',
+          color: blue,
+          sample: true,
+          note: 'Anomaly = yearly mean minus long-term mean ($_globalMean mm/day).',
+          child: gridTable(
+            headers: const ['Year', 'mm/day', '% of mean', 'Status'],
+            headerColor: Colors.blue.shade900,
+            flex: const [1, 1.2, 1.2, 1.4],
+            rows: [
+              for (final e in _years.entries)
+                [
+                  cell('${e.key}', bold: true),
+                  cell(
+                    (e.value >= 0 ? '+' : '') + e.value.toStringAsFixed(2),
+                    bg: scale((e.value + 0.05) / 0.10, Colors.deepOrange.shade400,
+                        Colors.blue.shade700, Colors.white),
+                  ),
+                  cell('${(e.value / _globalMean * 100).toStringAsFixed(1)}%'),
+                  pill(
+                    e.value > 0.015 ? 'Wet' : (e.value < -0.015 ? 'Dry' : 'Normal'),
+                    e.value > 0.015
+                        ? Colors.blue.shade600
+                        : (e.value < -0.015 ? Colors.deepOrange : Colors.grey),
+                  ),
+                ],
+            ],
+          ),
+        ),
+
+        TableCard(
+          title: 'Ocean, land and global change',
+          color: Colors.teal.shade700,
+          sample: true,
+          child: gridTable(
+            headers: const ['Surface', 'Anomaly (mm/day)'],
+            headerColor: Colors.teal.shade900,
+            zebra: Colors.teal.shade50,
+            flex: const [1, 2],
+            rows: [
+              [cell('Ocean', bold: true, left: true), barCell(0.02, 0.05, Colors.teal.shade600, '+0.02')],
+              [cell('Land', bold: true, left: true), barCell(-0.03, 0.05, Colors.deepOrange, '-0.03')],
+              [cell('Global', bold: true, left: true), barCell(0.00, 0.05, Colors.indigo, '0.00')],
+            ],
+          ),
+        ),
+
+        TableCard(
+          title: 'Anomaly classes',
+          color: Colors.indigo.shade600,
+          note: 'Large anomalies on maps are usually +/-50% of a location\'s average.',
+          child: gridTable(
+            headers: const ['Class', 'Range', 'Colour'],
+            headerColor: Colors.indigo.shade900,
+            zebra: Colors.indigo.shade50,
+            flex: const [1.4, 1.2, 1],
+            rows: [
+              [cell('Very wet', bold: true, left: true), cell('above +50%'), cell('', bg: Colors.blue.shade900)],
+              [cell('Wet', bold: true, left: true), cell('+10% to +50%'), cell('', bg: Colors.lightBlue)],
+              [cell('Normal', bold: true, left: true), cell('-10% to +10%'), cell('', bg: Colors.grey.shade300)],
+              [cell('Dry', bold: true, left: true), cell('-50% to -10%'), cell('', bg: Colors.orange)],
+              [cell('Very dry', bold: true, left: true), cell('below -50%'), cell('', bg: Colors.deepOrange.shade900)],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

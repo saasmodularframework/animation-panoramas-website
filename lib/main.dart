@@ -18,6 +18,12 @@ import 'l10n/app_strings.dart';
 import 'pages/about_contact_pages.dart';
 import 'pages/media_pages.dart';
 import 'pages/scenes_pages.dart';
+
+import 'pages/precipitation_page.dart';
+import 'pages/temperature_page.dart';
+import 'pages/vegetation_page.dart';
+import 'pages/drought_page.dart';
+
 import 'pages_registry.dart';
 import 'services/olap_service.dart';
 import 'widgets/ecosystem_sprite_loader.dart';
@@ -44,7 +50,7 @@ class AppRoute {
 }
 
 const seo = SeoConfig(
-  baseUrl: baseUrl, // https://animation-panoramas-website.onrender.com (defined in pages_registry.dart)
+  baseUrl: baseUrl, // https://animation-panoramas-website.onrender.com 
   siteName: 'Animation Panoramas',
   description: 'Interactive ecosystem panoramas, videos, services and agenda.',
 );
@@ -67,6 +73,11 @@ const _pages = {
   'chart': 'Charts.',
   'pdf-library': 'PDF per page.',
   'admin': 'Admin.',
+  // Added routes for the climate pages
+  'precipitation': 'Global precipitation anomaly by year.',
+  'temperature': 'Temperature trends and analysis.',
+  'vegetation': 'Vegetation index trend by continent.',
+  'drought': 'Drought monitoring and indicators.',
 };
 
 final routes = <AppRoute>[
@@ -127,7 +138,7 @@ class NotFoundPage extends StatelessWidget {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterError.onError = (d) => debugPrint('FlutterError: ${d.exceptionAsString()}\n${d.stack}');
-  // Release builds never show the red error box; debug builds still do.
+
   ErrorWidget.builder = (d) => kDebugMode
       ? Material(
           color: Colors.red.shade900,
@@ -365,13 +376,21 @@ class RootNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final items = [
-      NavbarItem(Icons.home_outlined, context.tr('home'), selectedIcon: const Icon(Icons.home, size: 26)),
-      NavbarItem(Icons.grid_view_outlined, context.tr('scenes'), selectedIcon: const Icon(Icons.grid_view, size: 26)),
-      NavbarItem(Icons.photo_library_outlined, context.tr('pictures'), selectedIcon: const Icon(Icons.photo_library, size: 26)),
-      NavbarItem(Icons.contact_mail_outlined, context.tr('contact'), selectedIcon: const Icon(Icons.contact_mail, size: 26)),
+      NavbarItem(Icons.water_drop_outlined, 'Precipitation', selectedIcon: const Icon(Icons.water_drop, size: 26)),
+      NavbarItem(Icons.thermostat_outlined, 'Temperature', selectedIcon: const Icon(Icons.thermostat, size: 26)),
+      NavbarItem(Icons.eco_outlined, 'Vegetation', selectedIcon: const Icon(Icons.eco, size: 26)),
+      NavbarItem(Icons.landscape_outlined, 'Drought', selectedIcon: const Icon(Icons.landscape, size: 26)),
     ];
-    final roots = <Widget>[const EcosystemHomeScreen(), const ScenesPage(), const PicturesPage(), const ContactPage()];
+    
+    final roots = <Widget>[
+      const PrecipitationPage(),
+      const TemperaturePage(),
+      const VegetationPage(),
+      const DroughtPage(),
+    ];
+
     return NavbarRouter(
       errorBuilder: (_) => const Center(child: Text('Error 404')),
       onBackButtonPressed: (isExiting) => isExiting,

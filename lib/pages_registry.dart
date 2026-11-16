@@ -21,7 +21,6 @@ class PageInfo {
   String get url => '$baseUrl/$slug';
 }
 
-/// Single source of truth: drawer, PDFs, RSS and the sitemap all read this.
 final List<PageInfo> appPages = [
   PageInfo('home', 'Home', 'Overview of every page and scene.', () => const HomeScreen()),
   PageInfo('main', 'Main', 'Panorama viewer with live telemetry.', () => const EcosystemHomeScreen()),
@@ -30,6 +29,10 @@ final List<PageInfo> appPages = [
   PageInfo('pictures', 'Pictures', 'Vertical carousel of sprite sheets with zoom.', () => const PicturesPage()),
   PageInfo('videos', 'Videos', 'Seven scene videos, autoplay and muted.', () => const VideosPage()),
   PageInfo('videos-vimeo', 'Videos Vimeo', 'Seven Vimeo players.', () => const VimeoPage()),
+  PageInfo('precipitation', 'Precipitation', 'Global precipitation anomaly by year.', () => const PrecipitationPage()),
+  PageInfo('temperature', 'Temperature', 'Temperature trends and analysis.', () => const TemperaturePage()),
+  PageInfo('vegetation', 'Vegetation', 'Vegetation index trend by continent.', () => const VegetationPage()),
+  PageInfo('drought', 'Drought', 'Drought monitoring and indicators.', () => const DroughtPage()),
   PageInfo('about', 'About', 'Animated service hours and app counters.', () => const AboutPage()),
   PageInfo('contact', 'Contact', 'Contact details, share buttons, RSS.', () => const ContactPage()),
   PageInfo('app-dev-services', 'App Dev Services', 'React Native, Android, iOS, SwiftUI, Flutter, .NET.', () => const ServicesPage()),
@@ -57,3 +60,4 @@ String sitemapXml() {
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
       '${urls.map((u) => '  <url><loc>$u</loc></url>').join('\n')}\n</urlset>';
 }
+
