@@ -46,8 +46,7 @@ dependencies:
   dart_rss: ^3.0.3
   pdf: ^3.11.0
   printing: ^5.13.0
-  social_sharing_plus: ^1.2.3
-  flutter_social_share_plugin: ^2.1.4
+  url_launcher: ^6.3.0
 
 dependency_overrides:
   intl: ^0.20.3

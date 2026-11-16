@@ -78,7 +78,10 @@ final routes = <AppRoute>[
 ];
 
 Route<dynamic> _onGenerateRoute(RouteSettings settings) {
-  final path = Uri.parse(settings.name ?? '/').path;
+  var path = Uri.tryParse(settings.name ?? '/')?.path ?? '/';
+  if (path.isEmpty) path = '/';
+  if (path.length > 1 && path.endsWith('/')) path = path.substring(0, path.length - 1);
+  if (path == '/index.html') path = '/';
   String title = seo.siteName;
   WidgetBuilder? builder;
 
@@ -124,13 +127,16 @@ class NotFoundPage extends StatelessWidget {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterError.onError = (d) => debugPrint('FlutterError: ${d.exceptionAsString()}\n${d.stack}');
-  ErrorWidget.builder = (d) => Material(
-        color: Colors.red.shade900,
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: SingleChildScrollView(child: Text(d.exceptionAsString(), style: const TextStyle(color: Colors.white, fontSize: 11))),
-        ),
-      );
+  // Release builds never show the red error box; debug builds still do.
+  ErrorWidget.builder = (d) => kDebugMode
+      ? Material(
+          color: Colors.red.shade900,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: SingleChildScrollView(child: Text(d.exceptionAsString(), style: const TextStyle(color: Colors.white, fontSize: 11))),
+          ),
+        )
+      : const SizedBox.shrink();
   usePathUrlStrategy(); 
   if (kIsWeb) {
     databaseFactory = databaseFactoryFfiWeb; 

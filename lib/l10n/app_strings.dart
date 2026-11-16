@@ -41,7 +41,8 @@ static const supported = [
   };
 
 
-  static AppStrings of(BuildContext c) => Localizations.of<AppStrings>(c, AppStrings)!;
+  static AppStrings of(BuildContext c) =>
+      Localizations.of<AppStrings>(c, AppStrings) ?? AppStrings(const Locale('en'));
   String _lookup(String k) =>
       _arb[locale.languageCode]?[k] ?? _v[locale.languageCode]?[k] ?? _arb['en']?[k] ?? _v['en']![k] ?? k;
   String t(String k) => _lookup(k);
