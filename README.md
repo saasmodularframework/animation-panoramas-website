@@ -16,6 +16,30 @@ An advanced, responsive 3D and 2D ecosystem and panorama explorer built with Flu
 - **Columnar Database & Grafana MCP**: High-throughput analytical logging and metrics processed via a containerized OLAP backend and visualized through a half-transparent glassmorphism dashboard HUD.
 - **Cross-Platform Web Ready**: Fully optimized for modern web browsers with responsive layout scaling.
 
+### NASA Earth Science & Satellite Data Pages
+
+The application includes four specialized analytics pages powered by NASA satellite missions and global environmental datasets:
+
+- **Precipitation** (`precipitation_page.dart`)
+   - **Variable:** Global precipitation anomaly by year
+   - **Data Source:** [NASA Goddard GPCP (Global Precipitation Climatology Project)](https://disc.gsfc.nasa.gov/) Monthly and Daily versions, research insights via [NASA Goddard Precipitation Research](https://earth.gsfc.nasa.gov/meso/research/precipitation), and cross-checked using the [GPM IMERG Data Directory](https://gpm.nasa.gov/node/3037) (including historical TRMM-era records back to 1998).
+   - **Features:** Visualizes global-average monthly precipitation over land and ocean, tracking long-term anomalies.
+
+- **Temperature** (`temperature_page.dart`)
+   - **Variable:** Global temperature anomaly by decade
+   - **Data Source:** [DataHub Core Global Temperature / NASA GISS Report](https://datahub.io/core/global-temp/UPDATE_SCRIPT_MAINTENANCE_REPORT).
+   - **Features:** Structured breakdown of decadal temperature deviations across Northern and Southern hemispheres relative to historical baselines.
+
+- **Vegetation** (`vegetation_page.dart`)
+   - **Variable:** Vegetation index trend by continent
+   - **Data Source:** [NASA Earth Observatory](https://earthobservatory.nasa.gov/global-maps/MOD_NDVI_M/GPM_3IMERGM) (measured via Terra satellite), [Sentinel Hub Space Apps Data Offer](https://www.sentinel-hub.com/spaceapps-data/), and the [Space Apps 2020 Resources Page](https://2020.spaceappschallenge.org/challenges/observe/scanning-lifeforms/resources) (NASA GIBS, Worldview, and Earthdata Search).
+   - **Features:** Evaluates canopy health, vegetative growth trends, and rainfall response indexes worldwide.
+
+- **Drought** (`drought_page.dart`)
+   - **Variable:** Soil moisture anomaly by region
+   - **Data Source:** [NASA SMAP (Soil Moisture Active Passive) Research Article (PMC7931972)](https://pmc.ncbi.nlm.nih.gov/articles/PMC7931972/) and high-resolution radiometer/radar metrics.
+   - **Features:** Monitors surface layer and root zone soil moisture content, categorizing regional drought severity and risk levels.
+
 ## Tech Stack
 
 - **Framework**: [Flutter Web](https://flutter.dev) (v3.0+)
@@ -49,6 +73,10 @@ animation-panoramas-website/
 │   │   ├── about_contact_pages.dart    # Animated counters, contact, RSS list
 │   │   ├── services_agenda_pages.dart  # App-dev services table + calendar booking agenda
 │   │   ├── notes_page.dart             # SQLite notes with timeago
+│   │   ├── precipitation_page.dart     # Precipitation analysis & monitoring
+│   │   ├── temperature_page.dart       # Temperature tracking & trends
+│   │   ├── vegetation_page.dart        # Vegetation health & NDVI indicators
+│   │   ├── drought_page.dart           # Drought severity & index assessment
 │   │   ├── charts_page.dart            # Ten charts built from bookings
 │   │   └── admin_pdf_pages.dart        # PDF library, admin login and panel
 │   ├── screens/
@@ -65,7 +93,8 @@ animation-panoramas-website/
 │   │   ├── animated_switcher_translation.dart# Language menu and day/night switch
 │   │   ├── textured_button.dart              # Gradient + texture "More" button
 │   │   ├── time_spinner_block.dart           # Spinner time picker + duration wheel
-│   │   └── share_bar.dart                    # LinkedIn / WhatsApp / mail sharing adapter
+│   │   ├── share_bar.dart                    # LinkedIn / WhatsApp / mail sharing adapter
+│   │   └── structured_table.dart             # Flexible table cards, shells, and styled cells
 │   ├── app_state.dart          # Global locale and theme-mode notifiers
 │   ├── pages_registry.dart     # Single page list feeding drawer, PDFs, RSS and sitemap
 │   └── main.dart               # App entry point, localization setup, bottom nav and scene viewer with metrics UI

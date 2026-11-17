@@ -10,6 +10,10 @@ import 'screens/home_screen.dart';
 import 'pages/media_pages.dart';
 import 'pages/notes_page.dart';
 import 'pages/scenes_pages.dart';
+import 'pages/precipitation_page.dart';
+import 'pages/temperature_page.dart';
+import 'pages/vegetation_page.dart';
+import 'pages/drought_page.dart';
 import 'pages/services_agenda_pages.dart';
 
 const baseUrl = 'https://animation-panoramas-website.onrender.com';
