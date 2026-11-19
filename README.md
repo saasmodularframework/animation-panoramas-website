@@ -60,6 +60,7 @@ animation-panoramas-website/
 ├── lib/
 │   ├── data/
 │   │   ├── ecosystems.dart     # Biome definitions, coords, and metadata mappings
+│   │   ├── telemetry_datasets.dart # Typed tables behind the NASA pages, with CSV export
 │   │   └── network/
 │   │       └── dio_client.dart # Shared Dio client
 │   ├── l10n/
@@ -94,7 +95,8 @@ animation-panoramas-website/
 │   │   ├── textured_button.dart              # Gradient + texture "More" button
 │   │   ├── time_spinner_block.dart           # Spinner time picker + duration wheel
 │   │   ├── share_bar.dart                    # LinkedIn / WhatsApp / mail sharing adapter
-│   │   └── structured_table.dart             # Flexible table cards, shells, and styled cells
+│   │   ├── structured_table.dart             # Table cards, DataPageBody banner, styled cells
+│   │   └── climate_widgets.dart              # ClimateNavBar, SourceCard, DatasetTableCard, LiveTelemetryCard
 │   ├── app_state.dart          # Global locale and theme-mode notifiers
 │   ├── pages_registry.dart     # Single page list feeding drawer, PDFs, RSS and sitemap
 │   └── main.dart               # App entry point, localization setup, bottom nav and scene viewer with metrics UI
@@ -131,6 +133,7 @@ Run once from the project root, then rebuild:
 dart run sqflite_common_ffi_web:setup
 flutter build web --release
 ```
+
 
 
 

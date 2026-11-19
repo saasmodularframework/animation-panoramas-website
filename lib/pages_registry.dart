@@ -10,6 +10,7 @@ import 'screens/home_screen.dart';
 import 'pages/media_pages.dart';
 import 'pages/notes_page.dart';
 import 'pages/scenes_pages.dart';
+import 'pages/earth_science_page.dart';
 import 'pages/precipitation_page.dart';
 import 'pages/temperature_page.dart';
 import 'pages/vegetation_page.dart';
@@ -21,8 +22,15 @@ const baseUrl = 'https://animation-panoramas-website.onrender.com';
 class PageInfo {
   final String slug, title, description;
   final Widget Function() build;
-  const PageInfo(this.slug, this.title, this.description, this.build);
-  String get url => '$baseUrl/$slug';
+
+  final String group;
+  const PageInfo(this.slug, this.title, this.description, this.build, {this.group = 'site'});
+
+  String get url => slug == 'main' ? baseUrl : '$baseUrl/$slug';
+
+  String get path => slug == 'main' ? '/' : '/$slug';
+
+  double get priority => (slug == 'main' || slug == 'home') ? 1.0 : (group == 'climate' || slug == 'earth-science' ? 0.8 : 0.7);
 }
 
 final List<PageInfo> appPages = [
@@ -33,10 +41,11 @@ final List<PageInfo> appPages = [
   PageInfo('pictures', 'Pictures', 'Vertical carousel of sprite sheets with zoom.', () => const PicturesPage()),
   PageInfo('videos', 'Videos', 'Seven scene videos, autoplay and muted.', () => const VideosPage()),
   PageInfo('videos-vimeo', 'Videos Vimeo', 'Seven Vimeo players.', () => const VimeoPage()),
-  PageInfo('precipitation', 'Precipitation', 'Global precipitation anomaly by year.', () => const PrecipitationPage()),
-  PageInfo('temperature', 'Temperature', 'Temperature trends and analysis.', () => const TemperaturePage()),
-  PageInfo('vegetation', 'Vegetation', 'Vegetation index trend by continent.', () => const VegetationPage()),
-  PageInfo('drought', 'Drought', 'Drought monitoring and indicators.', () => const DroughtPage()),
+  PageInfo('earth-science', 'Earth Science', 'NASA satellite analytics: precipitation, temperature, vegetation and drought.', () => const EarthSciencePage(), group: 'climate'),
+  PageInfo('precipitation', 'Precipitation', 'Global precipitation anomaly by year.', () => const PrecipitationPage(), group: 'climate'),
+  PageInfo('temperature', 'Temperature', 'Global temperature anomaly by decade.', () => const TemperaturePage(), group: 'climate'),
+  PageInfo('vegetation', 'Vegetation', 'Vegetation index trend by continent.', () => const VegetationPage(), group: 'climate'),
+  PageInfo('drought', 'Drought', 'Soil moisture anomaly by region.', () => const DroughtPage(), group: 'climate'),
   PageInfo('about', 'About', 'Animated service hours and app counters.', () => const AboutPage()),
   PageInfo('contact', 'Contact', 'Contact details, share buttons, RSS.', () => const ContactPage()),
   PageInfo('app-dev-services', 'App Dev Services', 'React Native, Android, iOS, SwiftUI, Flutter, .NET.', () => const ServicesPage()),
@@ -55,13 +64,13 @@ void openPage(BuildContext c, String slug) =>
 void openScene(BuildContext c, Ecosystem e) =>
     Navigator.of(c, rootNavigator: true).pushNamed('/scene/${e.slug}');
 
-/// sitemap.xml content (copy to web/sitemap.xml at build time).
 String sitemapXml() {
-  final urls = [
-    ...appPages.map((p) => p.url),
-    ...getEcosystems().map((e) => '$baseUrl/scene/${e.slug}'),
+  final entries = <(String, double)>[
+    for (final p in appPages) (p.url, p.priority),
+    for (final e in getEcosystems()) ('$baseUrl/scene/${e.slug}', 0.6),
   ];
-  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-      '${urls.map((u) => '  <url><loc>$u</loc></url>').join('\n')}\n</urlset>';
+  final body = entries
+      .map((e) => '  <url>\n    <loc>${e.$1}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${e.$2.toStringAsFixed(1)}</priority>\n  </url>')
+      .join('\n');
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n$body\n</urlset>\n';
 }
-

@@ -6,7 +6,6 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:navbar_router/navbar_router.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' show databaseFactoryFfi, sqfliteFfiInit;
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
@@ -15,14 +14,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'app_state.dart';
 import 'data/ecosystems.dart';
 import 'l10n/app_strings.dart';
-import 'pages/about_contact_pages.dart';
-import 'pages/media_pages.dart';
 import 'pages/scenes_pages.dart';
-
-import 'pages/precipitation_page.dart';
-import 'pages/temperature_page.dart';
-import 'pages/vegetation_page.dart';
-import 'pages/drought_page.dart';
 
 import 'pages_registry.dart';
 import 'services/olap_service.dart';
@@ -57,34 +49,11 @@ const seo = SeoConfig(
 
 const primaryColor = Color(0xFF1B5C2A); // '#1B5C2A'
 
-const _pages = {
-  'main': 'Panorama viewer with live telemetry.',
-  'home': 'Overview of every page and scene.',
-  'metrics': 'Open-Meteo, Grafana MCP and telemetry widgets.',
-  'scenes': 'Responsive grid of all seven scenes.',
-  'pictures': 'Vertical carousel of sprite sheets with zoom.',
-  'videos': 'Seven scene videos.',
-  'videos-vimeo': 'Seven Vimeo players.',
-  'about': 'Service hours and app counters.',
-  'contact': 'Contact details and RSS.',
-  'app-dev-services': 'React Native, Android, iOS, SwiftUI, Flutter, .NET.',
-  'coding-agenda': 'Book a date, time and service.',
-  'notes': 'Notes.',
-  'chart': 'Charts.',
-  'pdf-library': 'PDF per page.',
-  'admin': 'Admin.',
-  // Added routes for the climate pages
-  'precipitation': 'Global precipitation anomaly by year.',
-  'temperature': 'Temperature trends and analysis.',
-  'vegetation': 'Vegetation index trend by continent.',
-  'drought': 'Drought monitoring and indicators.',
-};
-
 final routes = <AppRoute>[
-  for (final e in _pages.entries)
+  for (final p in appPages)
     AppRoute(
-      RouteMeta(path: e.key == 'main' ? '/' : '/${e.key}', title: pageBySlug(e.key).title, description: e.value),
-      (ctx) => e.key == 'main' ? const RootNav() : pageBySlug(e.key).build(),
+      RouteMeta(path: p.path, title: p.title, description: p.description),
+      (ctx) => p.build(),
     ),
 ];
 
@@ -92,7 +61,7 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
   var path = Uri.tryParse(settings.name ?? '/')?.path ?? '/';
   if (path.isEmpty) path = '/';
   if (path.length > 1 && path.endsWith('/')) path = path.substring(0, path.length - 1);
-  if (path == '/index.html') path = '/';
+  if (path == '/index.html' || path == '/main') path = '/';
   String title = seo.siteName;
   WidgetBuilder? builder;
 
@@ -367,44 +336,6 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
           ]),
         ),
       ]),
-    );
-  }
-}
-
-class RootNav extends StatelessWidget {
-  const RootNav({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-
-    final items = [
-      NavbarItem(Icons.water_drop_outlined, 'Precipitation', selectedIcon: const Icon(Icons.water_drop, size: 26)),
-      NavbarItem(Icons.thermostat_outlined, 'Temperature', selectedIcon: const Icon(Icons.thermostat, size: 26)),
-      NavbarItem(Icons.eco_outlined, 'Vegetation', selectedIcon: const Icon(Icons.eco, size: 26)),
-      NavbarItem(Icons.landscape_outlined, 'Drought', selectedIcon: const Icon(Icons.landscape, size: 26)),
-    ];
-    
-    final roots = <Widget>[
-      const PrecipitationPage(),
-      const TemperaturePage(),
-      const VegetationPage(),
-      const DroughtPage(),
-    ];
-
-    return NavbarRouter(
-      errorBuilder: (_) => const Center(child: Text('Error 404')),
-      onBackButtonPressed: (isExiting) => isExiting,
-      destinationAnimationCurve: Curves.fastOutSlowIn,
-      destinationAnimationDuration: 400,
-      type: NavbarType.notched,
-      destinations: [
-        for (int i = 0; i < items.length; i++)
-          DestinationRouter(
-            navbarItem: items[i],
-            destinations: [Destination(route: '/', widget: roots[i])],
-            initialRoute: '/',
-          ),
-      ],
     );
   }
 }
