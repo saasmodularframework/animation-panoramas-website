@@ -19,16 +19,22 @@ class PageShell extends StatefulWidget {
   final String slug, title;
   final Widget child;
   final List<String> crumbs;
+
+  final List<String?> crumbSlugs;
   final bool busy;
   final Ecosystem? ecosystem;
+
+  final Widget? bottom;
   const PageShell({
     super.key,
     required this.slug,
     required this.title,
     required this.child,
     this.crumbs = const [],
+    this.crumbSlugs = const [],
     this.busy = false,
     this.ecosystem,
+    this.bottom,
   });
 
   @override
@@ -44,6 +50,20 @@ class _PageShellState extends State<PageShell> {
     Future.delayed(700.milliseconds, () {
       if (mounted) setState(() => _booting = false);
     });
+  }
+
+  void _openCrumb(BuildContext context, int i) {
+    final root = Navigator.of(context, rootNavigator: true);
+    if (i == 0) {
+      root.pushNamedAndRemoveUntil('/', (_) => false);
+      return;
+    }
+    final slug = i - 1 < widget.crumbSlugs.length ? widget.crumbSlugs[i - 1] : null;
+    if (slug != null) {
+      root.pushReplacementNamed(slug == 'main' ? '/' : '/$slug');
+    } else {
+      Navigator.of(context).maybePop();
+    }
   }
 
   @override
@@ -77,7 +97,8 @@ class _PageShellState extends State<PageShell> {
           ),
         ],
       ),
-      endDrawer: const _AppDrawer(),
+      endDrawer: _AppDrawer(currentSlug: widget.slug),
+      bottomNavigationBar: widget.bottom,
       body: Stack(children: [
         Column(children: [
           Padding(
@@ -101,18 +122,14 @@ class _PageShellState extends State<PageShell> {
                   BreadCrumbItem(
                     content: Text(trail[i],
                         style: TextStyle(fontWeight: i == trail.length - 1 ? FontWeight.bold : FontWeight.normal)),
-                    onTap: i == trail.length - 1
-                        ? null
-                        : () => i == 0
-                            ? Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil('/', (_) => false)
-                            : Navigator.of(context).maybePop(),
+                    onTap: i == trail.length - 1 ? null : () => _openCrumb(context, i),
                   ),
               ],
             ),
           ),
           Expanded(child: widget.child),
         ]),
-        Positioned(right: 12, bottom: 12, child: QrBox(data: '$baseUrl/${widget.slug}')),
+        Positioned(right: 12, bottom: 12, child: QrBox(data: widget.slug == 'main' ? baseUrl : '$baseUrl/${widget.slug}')),
         if (loading)
           Positioned.fill(
             child: AbsorbPointer(
@@ -128,24 +145,41 @@ class _PageShellState extends State<PageShell> {
 }
 
 class _AppDrawer extends StatelessWidget {
-  const _AppDrawer();
+  final String currentSlug;
+  const _AppDrawer({required this.currentSlug});
+
+  static const _groupTitles = {'climate': 'NASA Earth Science'};
+
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(children: [
-        DrawerHeader(child: Align(alignment: Alignment.bottomLeft, child: Text(context.tr('menu'), style: Theme.of(context).textTheme.headlineSmall))),
-        for (final p in appPages)
-          ListTile(
-            dense: true,
-            leading: const Iconify(Mdi.chevron_right),
-            title: Text(p.title),
-            onTap: () {
-              Navigator.pop(context);
-              openPage(context, p.slug);
-            },
-          ),
-      ]),
-    );
+    final children = <Widget>[
+      DrawerHeader(child: Align(alignment: Alignment.bottomLeft, child: Text(context.tr('menu'), style: Theme.of(context).textTheme.headlineSmall))),
+    ];
+    String? lastGroup;
+    for (final p in appPages) {
+      // A small heading each time a new named group starts.
+      if (p.group != lastGroup && _groupTitles.containsKey(p.group)) {
+        children.add(const Divider());
+        children.add(Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+          child: Text(_groupTitles[p.group]!, style: Theme.of(context).textTheme.labelLarge),
+        ));
+      } else if (p.group != lastGroup && lastGroup != null) {
+        children.add(const Divider());
+      }
+      lastGroup = p.group;
+      children.add(ListTile(
+        dense: true,
+        selected: p.slug == currentSlug,
+        leading: const Iconify(Mdi.chevron_right),
+        title: Text(p.title),
+        onTap: () {
+          Navigator.pop(context);
+          if (p.slug != currentSlug) openPage(context, p.slug);
+        },
+      ));
+    }
+    return Drawer(child: ListView(children: children));
   }
 }
 

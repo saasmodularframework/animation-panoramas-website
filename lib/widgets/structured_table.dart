@@ -8,8 +8,8 @@ Color scale(double t, Color a, Color b, [Color? mid]) {
 
 Color onColor(Color c) => c.computeLuminance() > 0.5 ? Colors.black87 : Colors.white;
 
-class PageShell extends StatelessWidget {
-  const PageShell({
+class DataPageBody extends StatelessWidget {
+  const DataPageBody({
     super.key,
     required this.title,
     required this.variable,
@@ -31,7 +31,7 @@ class PageShell extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         Container(
-          padding: const EdgeInsets.fromLTRB(20, 56, 20, 24),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [color, dark],
@@ -59,7 +59,7 @@ class PageShell extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
           child: Column(children: children),
         ),
       ],
@@ -86,6 +86,9 @@ class TableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+
+      color: Colors.white,
+      surfaceTintColor: Colors.transparent,
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
       elevation: 3,
