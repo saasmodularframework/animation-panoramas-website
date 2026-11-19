@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/telemetry_datasets.dart';
 import '../widgets/telemetry_widgets.dart';
+import '../widgets/live_data_widgets.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
 
@@ -27,9 +28,11 @@ class PrecipitationPage extends StatelessWidget {
         icon: Icons.water_drop,
         color: blue,
         children: [
+          // Live data first, then the static reference tables.
+          LiveCards.precipitationNow(blue),
 
           TableCard(
-            title: 'Anomaly by year',
+            title: 'Reference: Anomaly by year',
             color: blue,
             sample: true,
             note: 'Anomaly = yearly mean minus long-term mean ($_globalMean mm/day).',
@@ -59,7 +62,7 @@ class PrecipitationPage extends StatelessWidget {
           ),
 
           TableCard(
-            title: 'Ocean, land and global change',
+            title: 'Reference: Ocean, land and global change',
             color: Colors.teal.shade700,
             sample: true,
             child: gridTable(
@@ -76,7 +79,7 @@ class PrecipitationPage extends StatelessWidget {
           ),
 
           TableCard(
-            title: 'Anomaly classes',
+            title: 'Reference: Anomaly classes',
             color: Colors.indigo.shade600,
             note: 'Large anomalies on maps are usually +/-50% of a location\'s average.',
             child: gridTable(
@@ -93,10 +96,8 @@ class PrecipitationPage extends StatelessWidget {
               ],
             ),
           ),
- 
-          LiveTelemetryCard(metric: LiveMetric.precipitation, color: blue),
           SourceCard(dataset: precipitationDataset, color: blue),
-          DatasetTableCard(dataset: precipitationDataset, color: blue),
+          DatasetTableCard(dataset: precipitationDataset, color: blue, title: 'Reference snapshot (static), ${precipitationDataset.unit}'),
         ],
       ),
     );

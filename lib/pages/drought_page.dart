@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/telemetry_datasets.dart';
 import '../widgets/telemetry_widgets.dart';
+import '../widgets/live_data_widgets.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
 
@@ -24,9 +25,11 @@ class DroughtPage extends StatelessWidget {
         icon: Icons.landscape,
         color: amber,
         children: [
+          // Live data first, then the static reference tables.
+          LiveCards.droughtSoilMoisture(amber),
           // Table 1 - region summary
           TableCard(
-            title: 'Soil moisture anomaly by region',
+            title: 'Reference: Soil moisture anomaly by region',
             color: amber,
             child: gridTable(
               headers: const ['Region', 'Year', 'Soil moisture'],
@@ -51,11 +54,12 @@ class DroughtPage extends StatelessWidget {
                 ],
               ],
             ),
-
+            // California recovery is due to irrigation backed by groundwater.
           ),
 
+          // Table 2 - rainfall bars
           TableCard(
-            title: 'Average annual rainfall (mm)',
+            title: 'Reference: Average annual rainfall (mm)',
             color: Colors.cyan.shade700,
             note: 'Western Cape is far below the national average.',
             child: gridTable(
@@ -74,8 +78,9 @@ class DroughtPage extends StatelessWidget {
             ),
           ),
 
+          // Table 3 - 2018 winter wheat statistics
           TableCard(
-            title: 'Australia 2018 winter wheat, change vs last year',
+            title: 'Reference: Australia 2018 winter wheat, change vs last year',
             color: Colors.deepOrange.shade600,
             child: gridTable(
               headers: const ['Report', 'Crop', 'Area', 'Expected yield'],
@@ -92,8 +97,9 @@ class DroughtPage extends StatelessWidget {
             ),
           ),
 
+          // Table 4 - California extent + key figures
           TableCard(
-            title: 'California 2015 and key figures',
+            title: 'Reference: California 2015 and key figures',
             color: Colors.purple.shade600,
             child: gridTable(
               headers: const ['Measure', 'Value'],
@@ -114,10 +120,8 @@ class DroughtPage extends StatelessWidget {
               ],
             ),
           ),
-
-          LiveTelemetryCard(metric: LiveMetric.soilMoisture, color: amber),
           SourceCard(dataset: droughtDataset, color: amber),
-          DatasetTableCard(dataset: droughtDataset, color: amber),
+          DatasetTableCard(dataset: droughtDataset, color: amber, title: 'Reference snapshot (static), ${droughtDataset.unit}'),
         ],
       ),
     );

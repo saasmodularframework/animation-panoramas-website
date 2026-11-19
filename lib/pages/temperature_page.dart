@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/telemetry_datasets.dart';
 import '../widgets/telemetry_widgets.dart';
+import '../widgets/live_data_widgets.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
 
@@ -32,9 +33,13 @@ class TemperaturePage extends StatelessWidget {
         icon: Icons.thermostat,
         color: red,
         children: [
-   
+          // Live data first, then the static reference tables.
+          LiveCards.globalTemperatureYears(red),
+          LiveCards.globalTemperatureDecades(red),
+          LiveCards.temperatureNow(red),
+          // Table 1 - heat + bars
           TableCard(
-            title: 'Mean anomaly by decade (\u00B0C)',
+            title: 'Reference: Mean anomaly by decade (\u00B0C)',
             color: red,
             note: '*2020s = 2020-2025 only. Base period 1951-1980.',
             child: gridTable(
@@ -56,7 +61,7 @@ class TemperaturePage extends StatelessWidget {
           ),
 
           TableCard(
-            title: 'Change from previous decade',
+            title: 'Reference: Change from previous decade',
             color: Colors.deepPurple.shade600,
             child: gridTable(
               headers: const ['Decade', 'Change (\u00B0C)', 'Trend'],
@@ -77,7 +82,7 @@ class TemperaturePage extends StatelessWidget {
           ),
 
           TableCard(
-            title: 'Ten warmest years',
+            title: 'Reference: Ten warmest years',
             color: Colors.amber.shade800,
             child: gridTable(
               headers: const ['Rank', 'Year', 'Anomaly (\u00B0C)'],
@@ -96,10 +101,8 @@ class TemperaturePage extends StatelessWidget {
               ],
             ),
           ),
-     
-          LiveTelemetryCard(metric: LiveMetric.temperature, color: red),
           SourceCard(dataset: temperatureDataset, color: red),
-          DatasetTableCard(dataset: temperatureDataset, color: red),
+          DatasetTableCard(dataset: temperatureDataset, color: red, title: 'Reference snapshot (static), ${temperatureDataset.unit}'),
         ],
       ),
     );

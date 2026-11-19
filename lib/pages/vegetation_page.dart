@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/telemetry_datasets.dart';
 import '../widgets/telemetry_widgets.dart';
+import '../widgets/live_data_widgets.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
 
@@ -29,9 +30,13 @@ class VegetationPage extends StatelessWidget {
         icon: Icons.eco,
         color: green,
         children: [
+          // Live data first, then the static reference tables.
+          LiveCards.vegetationNdvi(green),
+          LiveCards.vegetationWaterSupply(green),
+          LiveCards.vegetationWaterDemand(green),
 
           TableCard(
-            title: 'Greenness index by continent and decade',
+            title: 'Reference: Greenness index by continent and decade',
             color: green,
             sample: true,
             child: gridTable(
@@ -52,7 +57,7 @@ class VegetationPage extends StatelessWidget {
           ),
 
           TableCard(
-            title: 'Trend ranking (2000s to 2020s)',
+            title: 'Reference: Trend ranking (2000s to 2020s)',
             color: Colors.lime.shade800,
             sample: true,
             child: gridTable(
@@ -80,7 +85,7 @@ class VegetationPage extends StatelessWidget {
           ),
 
           TableCard(
-            title: 'How to read the index',
+            title: 'Reference: How to read the index',
             color: Colors.brown.shade600,
             child: gridTable(
               headers: const ['Index', 'Cover', 'Colour'],
@@ -95,10 +100,8 @@ class VegetationPage extends StatelessWidget {
               ],
             ),
           ),
-      
-          LiveTelemetryCard(metric: LiveMetric.evapotranspiration, color: green),
           SourceCard(dataset: vegetationDataset, color: green),
-          DatasetTableCard(dataset: vegetationDataset, color: green),
+          DatasetTableCard(dataset: vegetationDataset, color: green, title: 'Reference snapshot (static), ${vegetationDataset.unit}'),
         ],
       ),
     );
