@@ -5,11 +5,14 @@ import '../widgets/telemetry_widgets.dart';
 import '../widgets/live_data_widgets.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
+import '../data/telemetry_sections.dart' show anomalyClasses, oceanLandGlobalAnomaly;
+import '../widgets/charts/data_canvas_chart.dart';
+import '../widgets/charts/precipitation_charts.dart';
 
 class PrecipitationPage extends StatelessWidget {
   const PrecipitationPage({super.key});
 
-  static const double _globalMean = globalMeanPrecipitation; // mm/day, long-term global average
+  static const double _globalMean = globalMeanPrecipitation; 
   static const _years = precipitationAnomalyByYear;
 
   @override
@@ -62,6 +65,12 @@ class PrecipitationPage extends StatelessWidget {
           ),
 
           TableCard(
+            title: 'Chart: Anomaly by year (fl_chart)',
+            color: blue,
+            child: const PrecipitationYearBars(),
+          ),
+
+          TableCard(
             title: 'Reference: Ocean, land and global change',
             color: Colors.teal.shade700,
             sample: true,
@@ -79,6 +88,12 @@ class PrecipitationPage extends StatelessWidget {
           ),
 
           TableCard(
+            title: 'Chart: Ocean, land and global change (fl_chart)',
+            color: Colors.teal.shade700,
+            child: const OceanLandGlobalScatter(),
+          ),
+
+          TableCard(
             title: 'Reference: Anomaly classes',
             color: Colors.indigo.shade600,
             note: 'Large anomalies on maps are usually +/-50% of a location\'s average.',
@@ -93,6 +108,25 @@ class PrecipitationPage extends StatelessWidget {
                 [cell('Normal', bold: true, left: true), cell('-10% to +10%'), cell('', bg: Colors.grey.shade300)],
                 [cell('Dry', bold: true, left: true), cell('-50% to -10%'), cell('', bg: Colors.orange)],
                 [cell('Very dry', bold: true, left: true), cell('below -50%'), cell('', bg: Colors.deepOrange.shade900)],
+              ],
+            ),
+          ),
+          TableCard(
+            title: 'Chart: Anomaly classes (fl_chart)',
+            color: Colors.indigo.shade600,
+            child: const AnomalyClassDonut(),
+          ),
+
+          TableCard(
+            title: 'Canvas chart: choose data and how many points to plot',
+            color: blue,
+            child: DataCanvasChart(
+              fileName: 'precipitation',
+              initialColor: const Color(0xFF1565C0),
+              series: [
+                ChartSeries('Anomaly by year (mm/day)', [for (final e in _years.entries) MapEntry('${e.key}', e.value)]),
+                ChartSeries('Ocean / land / global (mm/day)', oceanLandGlobalAnomaly.entries.toList()),
+                ChartSeries('Anomaly class share (%)', [for (final c in anomalyClasses) MapEntry(c.$1, c.$3)], signed: false),
               ],
             ),
           ),

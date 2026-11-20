@@ -95,7 +95,7 @@ class _DayNightSwitchState extends State<DayNightSwitch> {
         valueListenable: AppState.manualTheme,
         builder: (_, manual, __) => manual
             ? IconButton(
-                tooltip: 'Auto: follow day / night',
+                tooltip: 'auto theme',
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(Icons.brightness_auto, size: 20),
                 onPressed: AppState.resumeAuto,
@@ -108,10 +108,9 @@ class _DayNightSwitchState extends State<DayNightSwitch> {
           controller: _night,
           width: 76,
           height: 30,
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
           activeColor: const Color(0xFF283593),
           inactiveColor: const Color(0xFFF2B84B),
-          activeChild: const Text('NIGHT', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.white)),
+          activeChild: const Text('EVENING', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.white)),
           inactiveChild: const Text('DAY', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.black87)),
           thumb: ValueListenableBuilder<bool>(
             valueListenable: _night,
