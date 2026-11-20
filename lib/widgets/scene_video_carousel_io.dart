@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:video_carousel/video_carousel.dart';
 
-import 'smart_snack.dart';
+import 'snack.dart';
 
 class SceneVideoCarousel extends StatefulWidget {
   const SceneVideoCarousel({super.key, required this.assets, required this.fallback});
