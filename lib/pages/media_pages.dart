@@ -7,6 +7,7 @@ import 'package:vimeo_video_player/vimeo_video_player.dart';
 
 import '../l10n/app_strings.dart';
 import '../widgets/page_shell.dart';
+import '../widgets/scene_video_carousel.dart';
 
 const _sprites = [
   'assets/sprites/sprite-01.png', 'assets/sprites/sprite-02.png', 'assets/sprites/sprite-03.png',
@@ -108,6 +109,12 @@ class _ZoomImageState extends State<_ZoomImage> with SingleTickerProviderStateMi
   }
 }
 
+const _sceneVideos = [
+  'assets/videos/scene-01.mp4', 'assets/videos/scene-02.mp4', 'assets/videos/scene-03.mp4',
+  'assets/videos/scene-04.mp4', 'assets/videos/scene-05.mp4', 'assets/videos/scene-06.mp4',
+  'assets/videos/scene-07.mp4',
+];
+
 class VideosPage extends StatelessWidget {
   const VideosPage({super.key});
   @override
@@ -116,11 +123,19 @@ class VideosPage extends StatelessWidget {
       slug: 'videos',
       title: context.tr('videos'),
       crumbs: [context.tr('videos')],
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
-        itemCount: 7,
-        itemBuilder: (_, i) => _VideoTile(n: i + 1),
-      ),
+      child: const SceneVideoCarousel(assets: _sceneVideos, fallback: _VideoList()),
+    );
+  }
+}
+
+class _VideoList extends StatelessWidget {
+  const _VideoList();
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
+      itemCount: _sceneVideos.length,
+      itemBuilder: (_, i) => _VideoTile(n: i + 1),
     );
   }
 }

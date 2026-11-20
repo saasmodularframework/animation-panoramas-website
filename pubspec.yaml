@@ -28,6 +28,8 @@ dependencies:
   flutter_carousel_widget: ^4.0.1
   extended_image: ^10.1.0
   video_player: ^2.9.0
+  video_carousel: ^0.0.4
+  path_provider: ^2.1.0
   vimeo_video_player: ^1.0.3
   flutter_inappwebview: ^6.1.5
   flutter_number_flow: ^0.1.0

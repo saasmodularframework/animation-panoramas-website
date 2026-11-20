@@ -23,6 +23,7 @@ import 'widgets/ecosystem_sprite_loader.dart';
 import 'widgets/grafana_mcp_dashboard_widget.dart';
 import 'widgets/open_meteo_live_widget.dart';
 import 'widgets/page_shell.dart';
+import 'widgets/smart_snack.dart';
 import 'widgets/telemetry_observability_widget.dart';
 import 'widgets/textured_button.dart';
 
@@ -133,6 +134,7 @@ Future<void> main() async {
   timeago.setLocaleMessages('hi', timeago.HiMessages());
   AppState.startAutoTheme();
   runApp(const EcosystemApp());
+  smartSnackDebugDemo(); // debug builds only
 }
 
 class EcosystemApp extends StatelessWidget {
@@ -155,6 +157,8 @@ class EcosystemApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
+       
+          builder: (context, child) => SmartSnackHost(child: child ?? const SizedBox.shrink()),
           themeMode: mode,
           theme: buildDayTheme(),
           darkTheme: buildNightTheme(),
