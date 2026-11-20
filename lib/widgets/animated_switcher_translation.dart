@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import '../app_state.dart';
 import '../l10n/app_strings.dart';
 
@@ -52,25 +53,75 @@ class AnimatedSwitcherTranslation extends StatelessWidget {
   }
 }
 
-class DayNightSwitch extends StatelessWidget {
+class DayNightSwitch extends StatefulWidget {
   const DayNightSwitch({super.key});
 
   @override
+  State<DayNightSwitch> createState() => _DayNightSwitchState();
+}
+
+class _DayNightSwitchState extends State<DayNightSwitch> {
+  late final ValueNotifier<bool> _night = ValueNotifier<bool>(AppState.themeMode.value == ThemeMode.dark);
+
+  @override
+  void initState() {
+    super.initState();
+    _night.addListener(_onSwitch);
+    AppState.themeMode.addListener(_onTheme);
+  }
+
+  void _onSwitch() {
+    final dark = _night.value;
+    if ((AppState.themeMode.value == ThemeMode.dark) != dark) AppState.setManual(dark: dark);
+  }
+
+  void _onTheme() {
+    final dark = AppState.themeMode.value == ThemeMode.dark;
+    if (_night.value != dark) _night.value = dark;
+  }
+
+  @override
+  void dispose() {
+    AppState.themeMode.removeListener(_onTheme);
+    _night.removeListener(_onSwitch);
+    _night.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: AppState.themeMode,
-      builder: (_, mode, __) {
-        final dark = mode == ThemeMode.dark;
-        return Tooltip(
-          message: 'Toggle Theme',
-          child: Switch(
-            value: dark,
-            thumbIcon: WidgetStateProperty.resolveWith(
-                (s) => Icon(s.contains(WidgetState.selected) ? Icons.nightlight_round : Icons.wb_sunny)),
-            onChanged: (v) => AppState.themeMode.value = v ? ThemeMode.dark : ThemeMode.light,
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      ValueListenableBuilder<bool>(
+        valueListenable: AppState.manualTheme,
+        builder: (_, manual, __) => manual
+            ? IconButton(
+                tooltip: 'Auto: follow day / night',
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.brightness_auto, size: 20),
+                onPressed: AppState.resumeAuto,
+              )
+            : const SizedBox.shrink(),
+      ),
+      Tooltip(
+        message: 'Day / Night',
+        child: AdvancedSwitch(
+          controller: _night,
+          width: 76,
+          height: 30,
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          activeColor: const Color(0xFF283593),
+          inactiveColor: const Color(0xFFF2B84B),
+          activeChild: const Text('NIGHT', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.white)),
+          inactiveChild: const Text('DAY', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.black87)),
+          thumb: ValueListenableBuilder<bool>(
+            valueListenable: _night,
+            builder: (_, night, __) => Container(
+              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              child: Icon(night ? Icons.nightlight_round : Icons.wb_sunny, size: 16, color: night ? const Color(0xFF283593) : const Color(0xFFE08A00)),
+            ),
           ),
-        );
-      },
-    );
+        ),
+      ),
+    ]);
   }
 }

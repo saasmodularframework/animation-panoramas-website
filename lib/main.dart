@@ -12,6 +12,7 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'app_state.dart';
+import 'theme/app_theme.dart';
 import 'data/ecosystems.dart';
 import 'l10n/app_strings.dart';
 import 'pages/scenes_pages.dart';
@@ -130,6 +131,7 @@ Future<void> main() async {
   timeago.setLocaleMessages('de', timeago.DeMessages());
   timeago.setLocaleMessages('ar', timeago.ArMessages());
   timeago.setLocaleMessages('hi', timeago.HiMessages());
+  AppState.startAutoTheme();
   runApp(const EcosystemApp());
 }
 
@@ -154,8 +156,8 @@ class EcosystemApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           themeMode: mode,
-          theme: ThemeData(useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: primaryColor)),
-          darkTheme: ThemeData(useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: primaryColor, brightness: Brightness.dark)),
+          theme: buildDayTheme(),
+          darkTheme: buildNightTheme(),
           initialRoute: '/',
           onGenerateRoute: _onGenerateRoute,
           onGenerateInitialRoutes: (name) => [_onGenerateRoute(RouteSettings(name: name))],
