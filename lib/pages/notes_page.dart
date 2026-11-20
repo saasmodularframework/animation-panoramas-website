@@ -66,13 +66,13 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   static const _fills = <Color>[
-    Color(0xFFFFF1A8), // yellow
-    Color(0xFFF9C9DB), // pink
-    Color(0xFFBFE3F6), // blue
-    Color(0xFFCDEBC3), // green
-    Color(0xFFDCD0F2), // lavender
-    Color(0xFFFFD8B0), // orange
-    Color(0xFFBFEBE0), // mint
+    Color(0xFFDADFE3), 
+    Color(0xFFC9D3DA), 
+    Color(0xFFBFD3E6), 
+    Color(0xFFD7CCC8), 
+    Color(0xFFCFC3B8), 
+    Color(0xFFB8C7D9), 
+    Color(0xFFC4C4BE), 
   ];
   static const _ink = Color(0xFF263238);
 
