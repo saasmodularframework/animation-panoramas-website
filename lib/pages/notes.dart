@@ -16,7 +16,7 @@ class NotesPage extends StatefulWidget {
 }
 
 class _NotesPageState extends State<NotesPage> {
-  List> _rows = [];
+  List<Map<String, Object?>> _rows = [];
   bool _busy = true;
   int? _highlightedId;
 
@@ -29,7 +29,7 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Future<void> _load({int? highlightId}) async {
-    var r = >[];
+    var r = <Map<String, Object?>>[];
     try {
       r = await Db.notes();
     } catch (e) {
@@ -55,7 +55,7 @@ class _NotesPageState extends State<NotesPage> {
     }
   }
 
-  Future?> _editDialog({
+  Future<Map<String, String>?> _editDialog({
     required String dialogTitle,
     String initialTitle = '',
     String initialBody = '',
@@ -315,7 +315,10 @@ class _NotesPageState extends State<NotesPage> {
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 220),
-                        alignment: Alignment.centerLeft,
+                        layoutBuilder: (current, previous) => Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [...previous, if (current != null) current],
+                        ),
                         child: Text(
                           '${n['title'] ?? ''}',
                           key: ValueKey('title_$id\_${n['title']}'),
@@ -348,7 +351,10 @@ class _NotesPageState extends State<NotesPage> {
                     padding: const EdgeInsets.only(right: 10),
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 220),
-                      alignment: Alignment.topLeft,
+                      layoutBuilder: (current, previous) => Stack(
+                        alignment: Alignment.topLeft,
+                        children: [...previous, if (current != null) current],
+                      ),
                       child: Text(
                         '${n['body'] ?? ''}',
                         key: ValueKey('body_$id\_${n['body']}'),

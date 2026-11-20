@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.13"
+  carousel_slider:
+    dependency: transitive
+    description:
+      name: carousel_slider
+      sha256: "9c695cc963bf1d04a47bd6021f68befce8970bcd61d24938e1fb0918cf5d9c42"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.1"
   characters:
     dependency: transitive
     description:
@@ -528,14 +536,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
-  listen:
-    dependency: transitive
-    description:
-      name: listen
-      sha256: "47501a08016a43fcad79252439d723f50f14f88fa7bfd8a177e0a417e5c9e1f2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   logging:
     dependency: transitive
     description:
@@ -649,7 +649,7 @@ packages:
     source: hosted
     version: "1.1.0"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: a7f4874f987173da295a61c181b8ee71dab59b332a486b391babf26a1b884825
@@ -909,6 +909,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.2"
+  sticky_footer_scrollview:
+    dependency: "direct main"
+    description:
+      name: sticky_footer_scrollview
+      sha256: c828fd3140e46612f71cda35f4a954340633f0a3f5eacd2ae860e6ff3bddf247
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   string_scanner:
     dependency: transitive
     description:
@@ -1077,6 +1085,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.4"
+  video_carousel:
+    dependency: "direct main"
+    description:
+      name: video_carousel
+      sha256: "3371e1e9e353cde8d4f16e4349ac9fb7a93d0a5d896b6c43364fba375e57b8cf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   video_player:
     dependency: "direct main"
     description:
@@ -1125,6 +1141,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.3"
+  visibility_detector:
+    dependency: transitive
+    description:
+      name: visibility_detector
+      sha256: dd5cc11e13494f432d15939c3aa8ae76844c42b723398643ce9addb88a5ed420
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0+2"
   web:
     dependency: "direct main"
     description:

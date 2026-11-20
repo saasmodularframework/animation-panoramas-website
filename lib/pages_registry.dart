@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'data/ecosystems.dart';
 import 'models/ecosystem.dart';
 import 'pages/about_company.dart';
-import 'pages/admin_pdf.dart';
+import 'pages/pdf_library.dart';
 import 'pages/charts.dart';
 import 'main.dart' show EcosystemHomeScreen;
 import 'pages/home.dart';

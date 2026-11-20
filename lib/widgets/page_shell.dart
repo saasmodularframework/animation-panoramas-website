@@ -7,7 +7,6 @@ import 'package:iconify_flutter_plus/iconify_flutter_plus.dart';
 import 'package:iconify_flutter_plus/icons/mdi.dart';
 import 'package:intl/intl.dart';
 import 'package:qr/qr.dart';
-import 'package:sticky_footer_scrollview/sticky_footer_scrollview.dart';
 import 'package:time/time.dart';
 
 import '../data/ecosystems.dart';
@@ -15,7 +14,7 @@ import '../l10n/app_strings.dart';
 import '../models/ecosystem.dart';
 import '../pages_registry.dart';
 import 'animated_switcher_translation.dart';
-import 'smart_snack.dart';
+import 'snack.dart';
 
 class PageShell extends StatefulWidget {
   final String slug, title;
@@ -120,7 +119,7 @@ class _PageShellState extends State<PageShell> {
           Expanded(child: AutoSizeText(widget.title, maxLines: 1, minFontSize: 12)),
         ]),
         actions: [
-          // Manual trigger for the SmartSnack messages (they also appear automatically on every page).
+
           IconButton(
             tooltip: context.tr('Notifications'),
             icon: const Icon(Icons.notifications_none),
@@ -167,20 +166,9 @@ class _PageShellState extends State<PageShell> {
               ],
             ),
           ),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return StickyFooterScrollView(
-                  itemCount: 1,
-                  itemBuilder: (context, _) => ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: widget.child,
-                  ),
-                  footer: _buildGlobalFooter(context),
-                );
-              },
-            ),
-          ),
+
+          Expanded(child: widget.child),
+          _buildGlobalFooter(context),
         ]),
         Positioned(right: 12, bottom: 12, child: QrBox(data: widget.slug == 'main' ? baseUrl : '$baseUrl/${widget.slug}')),
         if (loading)
@@ -210,7 +198,7 @@ class _AppDrawer extends StatelessWidget {
     ];
     String? lastGroup;
     for (final p in appPages) {
-      // A small heading each time a new named group starts.
+
       if (p.group != lastGroup && _groupTitles.containsKey(p.group)) {
         children.add(const Divider());
         children.add(Padding(
