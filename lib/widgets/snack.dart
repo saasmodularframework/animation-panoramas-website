@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../l10n/app_strings.dart';
+
 class SmartSnack {
   SmartSnack._();
 
@@ -20,11 +22,35 @@ class SmartSnack {
 
   static void clear() => _controller._clear();
 
+
   static void demo() {
-    warning('Checking internet');
-    Timer(const Duration(milliseconds: 600), () => info('New update available'));
-    Timer(const Duration(milliseconds: 1200), () => loading('Processing data'));
+    warning('Checking internet', duration: const Duration(seconds: 5));
+    Timer(const Duration(milliseconds: 600), () => info('New update available', duration: const Duration(seconds: 5)));
+    Timer(const Duration(milliseconds: 1200), () => loading('Processing data', duration: const Duration(seconds: 4)));
   }
+
+  static Timer? _greetTimer;
+
+
+  static void pageGreeting() {
+    _greetTimer?.cancel();
+    _greetTimer = Timer(const Duration(milliseconds: 500), demo);
+  }
+}
+
+class SmartSnackObserver extends NavigatorObserver {
+  void _page(Route<dynamic>? route) {
+    if (route is PageRoute) SmartSnack.pageGreeting();
+  }
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => _page(route);
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) => _page(newRoute);
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => _page(previousRoute);
 }
 
 enum SmartSnackKind { warning, info, loading }
@@ -41,9 +67,9 @@ class SmartSnackHandle {
 
 class SmartSnackColors {
   SmartSnackColors._();
-  static const warning = Color(0xFF7A5A4A); // brownish
-  static const info = Color(0xFF43698C); // blueish
-  static const loading = Color(0xFF5B6670); // greyish
+  static const warning = Color(0xFF7A5A4A);
+  static const info = Color(0xFF43698C); 
+  static const loading = Color(0xFF5B6670);
 
   static Color of(SmartSnackKind k) => switch (k) {
         SmartSnackKind.warning => warning,
@@ -70,9 +96,13 @@ class _SmartSnackController extends ChangeNotifier {
   int _nextId = 0;
 
   SmartSnackHandle _show(SmartSnackKind kind, String message, Duration duration) {
+ 
+    for (final e in _entries) {
+      if (!e.closing && e.kind == kind && e.message == message) e.closing = true;
+    }
     final entry = _SnackEntry(_nextId++, kind, message, duration);
     _entries.add(entry);
-    // Keep the stack short: retire the oldest ones first.
+
     final open = _entries.where((e) => !e.closing).toList();
     for (var i = 0; i < open.length - _maxVisible; i++) {
       open[i].closing = true;
@@ -83,7 +113,7 @@ class _SmartSnackController extends ChangeNotifier {
 
   void _requestClose(_SnackEntry entry) {
     if (entry.closing || !_entries.contains(entry)) return;
-    // No host mounted (nobody could animate it out): drop it right away.
+   
     if (!hasListeners) {
       _entries.remove(entry);
       return;
@@ -130,11 +160,10 @@ class SmartSnackHost extends StatelessWidget {
             final wide = MediaQuery.of(context).size.width >= 720;
             return SafeArea(
               child: Align(
-                // Wide: bottom-left (the QR box lives bottom-right).
-                // Narrow: centred, lifted above the QR box like page content is.
+
                 alignment: wide ? Alignment.bottomLeft : Alignment.bottomCenter,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, wide ? 16 : 100),
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, wide ? 96 : 100),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 440),
                     child: Column(
@@ -204,7 +233,6 @@ class _SnackItemState extends State<_SnackItem> with SingleTickerProviderStateMi
 
   void _pauseTimer() => _timer?.cancel();
 
-  /// Slide out, then drop the entry.
   void _leave() {
     if (_leaving) return;
     _leaving = true;
@@ -283,18 +311,22 @@ class _SnackCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  entry.message,
+                  AppStrings.of(context).t(entry.message),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: fg, fontSize: 14, fontWeight: FontWeight.w500, height: 1.25),
                 ),
               ),
             ),
-            IconButton(
-              tooltip: 'Close',
-              icon: const Icon(Icons.close, size: 18, color: Colors.white70),
-              visualDensity: VisualDensity.compact,
-              onPressed: onClose,
+
+            Semantics(
+              button: true,
+              label: AppStrings.of(context).t('Close'),
+              child: IconButton(
+                icon: const Icon(Icons.close, size: 18, color: Colors.white70),
+                visualDensity: VisualDensity.compact,
+                onPressed: onClose,
+              ),
             ),
           ]),
         ),

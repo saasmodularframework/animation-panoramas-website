@@ -7,19 +7,21 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show databaseFactoryFfi, sqfliteFfiInit;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart'
+    show databaseFactoryFfi, sqfliteFfiInit;
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'app_state.dart';
-import 'theme/app_theme.dart';
 import 'data/ecosystems.dart';
 import 'l10n/app_strings.dart';
 import 'pages/scenes_pages.dart';
-
 import 'pages_registry.dart';
 import 'services/olap_service.dart';
+import 'theme/app_theme.dart';
+import 'utils/day_evening_auto.dart';
 import 'widgets/ecosystem_sprite_loader.dart';
+import 'widgets/footer.dart';
 import 'widgets/grafana_mcp_dashboard_widget.dart';
 import 'widgets/open_meteo_live_widget.dart';
 import 'widgets/page_shell.dart';
@@ -29,12 +31,20 @@ import 'widgets/textured_button.dart';
 
 class SeoConfig {
   final String baseUrl, siteName, description;
-  const SeoConfig({required this.baseUrl, required this.siteName, required this.description});
+  const SeoConfig({
+    required this.baseUrl,
+    required this.siteName,
+    required this.description,
+  });
 }
 
 class RouteMeta {
   final String path, title, description;
-  const RouteMeta({required this.path, required this.title, required this.description});
+  const RouteMeta({
+    required this.path,
+    required this.title,
+    required this.description,
+  });
 }
 
 class AppRoute {
@@ -44,12 +54,15 @@ class AppRoute {
 }
 
 const seo = SeoConfig(
-  baseUrl: baseUrl, // https://animation-panoramas-website.onrender.com 
+  baseUrl: baseUrl, // https://animation-panoramas-website.onrender.com
   siteName: 'Animation Panoramas',
   description: 'Interactive ecosystem panoramas, videos, services and agenda.',
 );
 
-const primaryColor = Color(0xFF1B5C2A); // '#1B5C2A'
+const primaryColor = Color(0xFF1B5C2A);
+
+const String _dayGifAsset = 'assets/gifs/bg.gif';
+const String _nightGifAsset = 'assets/gifs/bg_ev.gif';
 
 final routes = <AppRoute>[
   for (final p in appPages)
@@ -62,7 +75,9 @@ final routes = <AppRoute>[
 Route<dynamic> _onGenerateRoute(RouteSettings settings) {
   var path = Uri.tryParse(settings.name ?? '/')?.path ?? '/';
   if (path.isEmpty) path = '/';
-  if (path.length > 1 && path.endsWith('/')) path = path.substring(0, path.length - 1);
+  if (path.length > 1 && path.endsWith('/')) {
+    path = path.substring(0, path.length - 1);
+  }
   if (path == '/index.html' || path == '/main') path = '/';
   String title = seo.siteName;
   WidgetBuilder? builder;
@@ -86,7 +101,11 @@ Route<dynamic> _onGenerateRoute(RouteSettings settings) {
   final b = builder;
   return MaterialPageRoute<void>(
     settings: settings,
-    builder: (c) => Title(title: title == seo.siteName ? title : '$title · ${seo.siteName}', color: primaryColor, child: b(c)),
+    builder: (c) => Title(
+      title: title == seo.siteName ? title : '$title · ${seo.siteName}',
+      color: primaryColor,
+      child: b(c),
+    ),
   );
 }
 
@@ -100,29 +119,108 @@ class NotFoundPage extends StatelessWidget {
             const SizedBox(height: 8),
             const Text('404 – page not found'),
             const SizedBox(height: 16),
-            FilledButton(onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false), child: Text(context.tr('home'))),
+            FilledButton(
+              onPressed: () => Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/', (_) => false),
+              child: Text(context.tr('home')),
+            ),
           ]),
+        ),
+        bottomNavigationBar: const StickyCopyrightFooter(
+          text: '© 2026',
         ),
       );
 }
 
+class ForbiddenPage extends StatelessWidget {
+  const ForbiddenPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(seo.siteName, style: theme.textTheme.headlineMedium),
+            const SizedBox(height: 8),
+            const Text('403 – access forbidden'),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/', (_) => false),
+              child: Text(context.tr('home')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GlobalGifBackground extends StatelessWidget {
+  const _GlobalGifBackground({
+    required this.isDay,
+    required this.child,
+  });
+
+  final bool isDay;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final gifPath = isDay ? _dayGifAsset : _nightGifAsset;
+    final scrimColor = isDay
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.black.withValues(alpha: 0.30);
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            gifPath,
+            key: ValueKey(gifPath),
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+          ),
+        ),
+        Positioned.fill(
+          child: IgnorePointer(
+            child: ColoredBox(color: scrimColor),
+          ),
+        ),
+        child,
+      ],
+    );
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterError.onError = (d) => debugPrint('FlutterError: ${d.exceptionAsString()}\n${d.stack}');
+  FlutterError.onError = (d) =>
+      debugPrint('FlutterError: ${d.exceptionAsString()}\n${d.stack}');
 
   ErrorWidget.builder = (d) => kDebugMode
       ? Material(
           color: Colors.red.shade900,
           child: Padding(
             padding: const EdgeInsets.all(8),
-            child: SingleChildScrollView(child: Text(d.exceptionAsString(), style: const TextStyle(color: Colors.white, fontSize: 11))),
+            child: SingleChildScrollView(
+              child: Text(
+                d.exceptionAsString(),
+                style: const TextStyle(color: Colors.white, fontSize: 11),
+              ),
+            ),
           ),
         )
       : const SizedBox.shrink();
-  usePathUrlStrategy(); 
+  usePathUrlStrategy();
   if (kIsWeb) {
-    databaseFactory = databaseFactoryFfiWeb; 
-  } else if (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux) {
+    databaseFactory = databaseFactoryFfiWeb;
+  } else if (defaultTargetPlatform == TargetPlatform.windows ||
+      defaultTargetPlatform == TargetPlatform.linux) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
@@ -139,6 +237,15 @@ Future<void> main() async {
 
 class EcosystemApp extends StatelessWidget {
   const EcosystemApp({super.key});
+
+  bool _resolveIsDay(BuildContext context, ThemeMode mode) {
+    return switch (mode) {
+      ThemeMode.light => true,
+      ThemeMode.dark => false,
+      ThemeMode.system => isDaytime(DateTime.now()) &&
+          MediaQuery.platformBrightnessOf(context) == Brightness.light,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,14 +264,29 @@ class EcosystemApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-       
-          builder: (context, child) => SmartSnackHost(child: child ?? const SizedBox.shrink()),
+          builder: (context, child) {
+            final isDay = _resolveIsDay(context, mode);
+            return _GlobalGifBackground(
+              isDay: isDay,
+              child: SmartSnackHost(
+                child: Column(
+                  children: [
+                    Expanded(child: child ?? const SizedBox.shrink()),
+                    const StickyCopyrightFooter(text: '© 2026'),
+                  ],
+                ),
+              ),
+            );
+          },
+          navigatorObservers: [SmartSnackObserver()],
           themeMode: mode,
           theme: buildDayTheme(),
           darkTheme: buildNightTheme(),
           initialRoute: '/',
           onGenerateRoute: _onGenerateRoute,
-          onGenerateInitialRoutes: (name) => [_onGenerateRoute(RouteSettings(name: name))],
+          onGenerateInitialRoutes: (name) => [
+            _onGenerateRoute(RouteSettings(name: name)),
+          ],
         ),
       ),
     );
@@ -209,7 +331,11 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
   Future<void> _loadParallelTelemetry() async {
     setState(() => _isFetchingLive = true);
     final ecosystem = getEcosystems()[_currentIndex];
-    final data = await _olapApiService.fetchEcosystemWithParallelAI(ecosystem.slug, ecosystem.lat, ecosystem.lng);
+    final data = await _olapApiService.fetchEcosystemWithParallelAI(
+      ecosystem.slug,
+      ecosystem.lat,
+      ecosystem.lng,
+    );
     if (!mounted) return;
     setState(() {
       _telemetryData = data;
@@ -224,7 +350,21 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
 
   String _toRoman(int number) {
     const values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
-    const numerals = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+    const numerals = [
+      'M',
+      'CM',
+      'D',
+      'CD',
+      'C',
+      'XC',
+      'L',
+      'XL',
+      'X',
+      'IX',
+      'V',
+      'IV',
+      'I',
+    ];
     var num = number;
     var result = '';
     for (int i = 0; i < values.length; i++) {
@@ -253,7 +393,10 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [ecosystem.background.top, ecosystem.background.bottom],
+              colors: [
+                ecosystem.background.top.withValues(alpha: 0.75),
+                ecosystem.background.bottom.withValues(alpha: 0.75),
+              ],
             ),
           ),
         ),
@@ -279,40 +422,79 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Card.filled(
-              color: cs.secondaryContainer.withOpacity(0.6),
+              color: cs.secondaryContainer.withValues(alpha: 0.6),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  FaIcon(FontAwesomeIcons.leaf, size: 12, color: cs.onSecondaryContainer),
+                  FaIcon(
+                    FontAwesomeIcons.leaf,
+                    size: 12,
+                    color: cs.onSecondaryContainer,
+                  ),
                   const SizedBox(width: 6),
-                  Text(ecosystem.type == '3d' ? context.tr('scene3d') : context.tr('scene2d'),
-                      style: TextStyle(letterSpacing: 0.8, color: cs.onSecondaryContainer, fontSize: 11)),
+                  Text(
+                    ecosystem.type == '3d'
+                        ? context.tr('scene3d')
+                        : context.tr('scene2d'),
+                    style: TextStyle(
+                      letterSpacing: 0.8,
+                      color: cs.onSecondaryContainer,
+                      fontSize: 11,
+                    ),
+                  ),
                 ]),
               ),
             ),
-
             Row(children: [
               Flexible(
-                child: AutoSizeText(ecosystem.title,
-                    maxLines: 1,
-                    minFontSize: 16,
-                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.5)),
+                child: AutoSizeText(
+                  ecosystem.title,
+                  maxLines: 1,
+                  minFontSize: 16,
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ),
               const SizedBox(width: 12),
-              TexturedButton(label: context.tr('more'), icon: Icons.arrow_forward, compact: true, onPressed: () => openScene(context, ecosystem)),
+              TexturedButton(
+                label: context.tr('more'),
+                icon: Icons.arrow_forward,
+                compact: true,
+                onPressed: () => openScene(context, ecosystem),
+              ),
             ]),
             const SizedBox(height: 4),
-            Text(context.sceneDesc(ecosystem.slug), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white70, height: 1.3)),
-
+            Text(
+              context.sceneDesc(ecosystem.slug),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white70, height: 1.3),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(children: [
-                  OpenMeteoLiveWidget(weatherData: _telemetryData, isFetching: _isFetchingLive, onRefresh: _loadParallelTelemetry),
+                  OpenMeteoLiveWidget(
+                    weatherData: _telemetryData,
+                    isFetching: _isFetchingLive,
+                    onRefresh: _loadParallelTelemetry,
+                  ),
                   const SizedBox(height: 10),
-                  GrafanaMcpDashboardWidget(telemetry: _telemetryData, isFetching: _isFetchingLive, onRefresh: _loadParallelTelemetry),
+                  GrafanaMcpDashboardWidget(
+                    telemetry: _telemetryData,
+                    isFetching: _isFetchingLive,
+                    onRefresh: _loadParallelTelemetry,
+                  ),
                   const SizedBox(height: 10),
-                  TelemetryObservabilityWidget(clickHouseLogs: const [], ecosystemData: _telemetryData),
+                  TelemetryObservabilityWidget(
+                    clickHouseLogs: const [],
+                    ecosystemData: _telemetryData,
+                  ),
                 ]),
               ),
             ),
@@ -320,23 +502,32 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
               scrollDirection: Axis.horizontal,
               child: Row(children: [
                 FilledButton.tonalIcon(
-                  onPressed: () => _select((_currentIndex - 1 + ecosystems.length) % ecosystems.length),
+                  onPressed: () => _select(
+                    (_currentIndex - 1 + ecosystems.length) % ecosystems.length,
+                  ),
                   icon: const FaIcon(FontAwesomeIcons.chevronLeft, size: 12),
                   label: Text(context.tr('prev')),
                 ),
                 const SizedBox(width: 12),
                 SegmentedButton<int>(
-                  segments: List.generate(ecosystems.length, (i) => ButtonSegment<int>(value: i, label: Text(_toRoman(i + 1)))),
+                  segments: List.generate(
+                    ecosystems.length,
+                    (i) => ButtonSegment<int>(
+                      value: i,
+                      label: Text(_toRoman(i + 1)),
+                    ),
+                  ),
                   selected: {_currentIndex},
                   onSelectionChanged: (s) => _select(s.first),
                 ),
                 const SizedBox(width: 12),
                 FilledButton.icon(
-                  onPressed: () => _select((_currentIndex + 1) % ecosystems.length),
+                  onPressed: () =>
+                      _select((_currentIndex + 1) % ecosystems.length),
                   icon: const FaIcon(FontAwesomeIcons.chevronRight, size: 12),
                   label: Text(context.tr('next')),
                 ),
-                const SizedBox(width: 90), 
+                const SizedBox(width: 90),
               ]),
             ),
           ]),

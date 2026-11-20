@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:math' as math;
+import 'dart:ui' show PointerDeviceKind;
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
@@ -123,26 +125,153 @@ class VideosPage extends StatelessWidget {
       slug: 'videos',
       title: context.tr('videos'),
       crumbs: [context.tr('videos')],
-      child: const SceneVideoCarousel(assets: _sceneVideos, fallback: _VideoList()),
+      child: const SceneVideoCarousel(assets: _sceneVideos, fallback: _VideoCarouselView()),
     );
   }
 }
 
-class _VideoList extends StatelessWidget {
-  const _VideoList();
+class _VideoCarouselView extends StatelessWidget {
+  const _VideoCarouselView();
+  @override
+  Widget build(BuildContext context) => _MediaCarousel(
+        count: _sceneVideos.length,
+        labelOf: (i) => 'Scene 0${i + 1}',
+        builder: (context, i, active) => _VideoTile(n: i + 1, active: active),
+      );
+}
+
+/// Generic carousel: PageView + auto advance (paused on hover) + manual arrows, dots and swipe.
+class _MediaCarousel extends StatefulWidget {
+  const _MediaCarousel({
+    required this.count,
+    required this.builder,
+    required this.labelOf,
+    this.interval = const Duration(seconds: 8),
+  });
+  final int count;
+  final Widget Function(BuildContext context, int index, bool active) builder;
+  final String Function(int index) labelOf;
+  final Duration interval;
+
+  @override
+  State<_MediaCarousel> createState() => _MediaCarouselState();
+}
+
+class _MediaCarouselState extends State<_MediaCarousel> {
+  final _pc = PageController();
+  Timer? _timer;
+  int _i = 0;
+  bool _hover = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _restart();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pc.dispose();
+    super.dispose();
+  }
+
+  void _restart() {
+    _timer?.cancel();
+    _timer = Timer.periodic(widget.interval, (_) {
+      if (!_hover && mounted) _go(_i + 1);
+    });
+  }
+
+  void _go(int target) {
+    final n = widget.count;
+    final t = ((target % n) + n) % n;
+    if (!_pc.hasClients) return;
+    if (t == 0 && _i == n - 1) {
+      _pc.jumpToPage(0); 
+    } else {
+      _pc.animateToPage(t, duration: const Duration(milliseconds: 450), curve: Curves.easeInOut);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    final n = widget.count;
+    return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
-      itemCount: _sceneVideos.length,
-      itemBuilder: (_, i) => _VideoTile(n: i + 1),
+      child: MouseRegion(
+        onEnter: (_) => _hover = true,
+        onExit: (_) => _hover = false,
+        child: Column(children: [
+          Expanded(
+            child: Stack(children: [
+              ScrollConfiguration(
+     
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse, PointerDeviceKind.trackpad},
+                ),
+                child: PageView.builder(
+                  controller: _pc,
+                  itemCount: n,
+                  onPageChanged: (i) {
+                    setState(() => _i = i);
+                    _restart(); 
+                  },
+                  itemBuilder: (context, i) => Center(
+                    child: LayoutBuilder(builder: (context, b) {
+                      final w = math.min(b.maxWidth - 120, math.max(240.0, (b.maxHeight - 56) * 16 / 9));
+                      return SizedBox(width: math.max(200.0, w), child: widget.builder(context, i, i == _i));
+                    }),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton.filledTonal(
+                  tooltip: 'Previous',
+                  icon: const Icon(Icons.chevron_left),
+                  onPressed: () => _go(_i - 1),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton.filledTonal(
+                  tooltip: 'Next',
+                  icon: const Icon(Icons.chevron_right),
+                  onPressed: () => _go(_i + 1),
+                ),
+              ),
+            ]),
+          ),
+          const SizedBox(height: 8),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            for (var d = 0; d < n; d++)
+              GestureDetector(
+                onTap: () => _go(d),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: d == _i ? 22 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: d == _i ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            const SizedBox(width: 12),
+            Text('${_i + 1} / $n  ·  ${widget.labelOf(_i)}', style: const TextStyle(fontSize: 12)),
+          ]),
+        ]),
+      ),
     );
   }
 }
 
 class _VideoTile extends StatefulWidget {
   final int n;
-  const _VideoTile({required this.n});
+  final bool active; // only the visible slide plays
+  const _VideoTile({required this.n, this.active = true});
   @override
   State<_VideoTile> createState() => _VideoTileState();
 }
@@ -158,8 +287,16 @@ class _VideoTileState extends State<_VideoTile> {
       ..initialize().then((_) {
         if (!mounted) return;
         setState(() {});
-        _c.play(); 
+        if (widget.active) _c.play();
       });
+  }
+
+  @override
+  void didUpdateWidget(covariant _VideoTile old) {
+    super.didUpdateWidget(old);
+    if (old.active != widget.active && _c.value.isInitialized) {
+      widget.active ? _c.play() : _c.pause();
+    }
   }
 
   @override
@@ -202,6 +339,10 @@ class _VideoTileState extends State<_VideoTile> {
   }
 }
 
+const _vimeoIds = [
+  '1246650631', '1246650631', '1246650631', '1246650631', '1246650631', '1246650631', '1246650631',
+];
+
 class VimeoPage extends StatelessWidget {
   const VimeoPage({super.key});
   @override
@@ -210,23 +351,24 @@ class VimeoPage extends StatelessWidget {
       slug: 'videos-vimeo',
       title: context.tr('vimeo'),
       crumbs: [context.tr('vimeo')],
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
-        itemCount: 7,
-        itemBuilder: (_, i) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: VimeoVideoPlayer(
-              videoId: '1246650631',
-              isAutoPlay: true,
-              isMuted: true,
-              isLooping: true,
-              showControls: true,
-              enableFullScreenOnPlay: false,
-              onReady: () => debugPrint('vimeo #${i + 1} ready'),
-            ),
-          ),
+      child: _MediaCarousel(
+        count: _vimeoIds.length,
+        labelOf: (i) => 'Vimeo ${i + 1}',
+
+        builder: (context, i, active) => AspectRatio(
+          aspectRatio: 16 / 9,
+          child: active
+              ? VimeoVideoPlayer(
+                  key: ValueKey('vimeo-$i'),
+                  videoId: _vimeoIds[i],
+                  isAutoPlay: true,
+                  isMuted: true,
+                  isLooping: true,
+                  showControls: true,
+                  enableFullScreenOnPlay: false,
+                  onReady: () => debugPrint('vimeo #${i + 1} ready'),
+                )
+              : const ColoredBox(color: Colors.black12),
         ),
       ),
     );

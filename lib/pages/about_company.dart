@@ -87,7 +87,7 @@ class ContactPage extends StatelessWidget {
       title: context.tr('contact'),
       crumbs: [context.tr('contact')],
       child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
-        const ListTile(leading: Icon(Icons.mail), title: Text('hello@animation-panoramas.example')),
+        const ListTile(leading: Icon(Icons.mail), title: Text('username@domain.tld')),
         const ListTile(leading: Icon(Icons.phone), title: Text('+00 000 000 000')),
         const SizedBox(height: 8),
         Wrap(spacing: 12, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [

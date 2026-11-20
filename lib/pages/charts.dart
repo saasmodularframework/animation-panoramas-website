@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import '../l10n/app_strings.dart';
 import '../services/db_service.dart';
 import '../widgets/page_shell.dart';
-import 'services_agenda_pages.dart' show kServices;
+import 'services_agenda.dart' show kServices;
 
 typedef Row_ = Map<String, dynamic>;
 

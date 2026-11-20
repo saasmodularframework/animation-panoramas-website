@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'theme/day_night_auto.dart';
+import 'theme/day_evening_auto.dart';
 
 class AppState {
   static final locale = ValueNotifier<Locale>(const Locale('en'));

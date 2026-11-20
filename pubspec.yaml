@@ -57,6 +57,7 @@ dependencies:
   day_night_theme_flutter: ^0.0.5
   flutter_advanced_switch: ^3.2.2
   animated_list_plus: ^0.5.2
+  sticky_footer_scrollview: ^1.1.1
 
 dependency_overrides:
   intl: ^0.20.3
@@ -69,3 +70,4 @@ flutter:
     - assets/models/
     - assets/sprites/
     - assets/videos/
+    - assets/gifs/

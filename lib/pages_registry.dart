@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'data/ecosystems.dart';
 import 'models/ecosystem.dart';
-import 'pages/about_contact_pages.dart';
-import 'pages/admin_pdf_pages.dart';
-import 'pages/charts_page.dart';
+import 'pages/about_company.dart';
+import 'pages/admin_pdf.dart';
+import 'pages/charts.dart';
 import 'main.dart' show EcosystemHomeScreen;
-import 'pages/home_page.dart';
+import 'pages/home.dart';
 import 'screens/home_screen.dart';
-import 'pages/media_pages.dart';
-import 'pages/notes_page.dart';
-import 'pages/scenes_pages.dart';
-import 'pages/earth_science_page.dart';
-import 'pages/precipitation_page.dart';
-import 'pages/temperature_page.dart';
-import 'pages/vegetation_page.dart';
-import 'pages/drought_page.dart';
-import 'pages/services_agenda_pages.dart';
+import 'pages/media.dart';
+import 'pages/notes.dart';
+import 'pages/scenes.dart';
+import 'pages/earth_science.dart';
+import 'pages/precipitation.dart';
+import 'pages/temperature.dart';
+import 'pages/vegetation.dart';
+import 'pages/drought.dart';
+import 'pages/services_agenda.dart';
 
 const baseUrl = 'https://animation-panoramas-website.onrender.com';
 

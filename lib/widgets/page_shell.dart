@@ -7,6 +7,7 @@ import 'package:iconify_flutter_plus/iconify_flutter_plus.dart';
 import 'package:iconify_flutter_plus/icons/mdi.dart';
 import 'package:intl/intl.dart';
 import 'package:qr/qr.dart';
+import 'package:sticky_footer_scrollview/sticky_footer_scrollview.dart';
 import 'package:time/time.dart';
 
 import '../data/ecosystems.dart';
@@ -14,6 +15,7 @@ import '../l10n/app_strings.dart';
 import '../models/ecosystem.dart';
 import '../pages_registry.dart';
 import 'animated_switcher_translation.dart';
+import 'smart_snack.dart';
 
 class PageShell extends StatefulWidget {
   final String slug, title;
@@ -25,6 +27,7 @@ class PageShell extends StatefulWidget {
   final Ecosystem? ecosystem;
 
   final Widget? bottom;
+  final Widget? footer;
   const PageShell({
     super.key,
     required this.slug,
@@ -35,6 +38,7 @@ class PageShell extends StatefulWidget {
     this.busy = false,
     this.ecosystem,
     this.bottom,
+    this.footer,
   });
 
   @override
@@ -66,6 +70,36 @@ class _PageShellState extends State<PageShell> {
     }
   }
 
+  Widget _buildGlobalFooter(BuildContext context) {
+    if (widget.footer != null) return widget.footer!;
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    return Material(
+      color: cs.surfaceContainerLow.withValues(alpha: 0.9),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 104, 12),
+        child: Row(
+          children: [
+            const Iconify(Mdi.panorama_horizontal, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: AutoSizeText(
+                context.tr('appTitle'),
+                maxLines: 1,
+                minFontSize: 11,
+                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ),
+            TextButton(
+              onPressed: () => openPage(context, 'about'),
+              child: Text(context.tr('about')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final eco = widget.ecosystem ?? getEcosystems().first;
@@ -86,6 +120,12 @@ class _PageShellState extends State<PageShell> {
           Expanded(child: AutoSizeText(widget.title, maxLines: 1, minFontSize: 12)),
         ]),
         actions: [
+          // Manual trigger for the SmartSnack messages (they also appear automatically on every page).
+          IconButton(
+            tooltip: context.tr('Notifications'),
+            icon: const Icon(Icons.notifications_none),
+            onPressed: SmartSnack.demo,
+          ),
           const DayNightSwitch(),
           const AnimatedSwitcherTranslation(),
           Builder(
@@ -127,14 +167,27 @@ class _PageShellState extends State<PageShell> {
               ],
             ),
           ),
-          Expanded(child: widget.child),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return StickyFooterScrollView(
+                  itemCount: 1,
+                  itemBuilder: (context, _) => ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: widget.child,
+                  ),
+                  footer: _buildGlobalFooter(context),
+                );
+              },
+            ),
+          ),
         ]),
         Positioned(right: 12, bottom: 12, child: QrBox(data: widget.slug == 'main' ? baseUrl : '$baseUrl/${widget.slug}')),
         if (loading)
           Positioned.fill(
             child: AbsorbPointer(
               child: ColoredBox(
-                color: Colors.grey.withOpacity(0.8),
+                color: Colors.grey.withValues(alpha: 0.8),
                 child: const Center(child: CircularGradientSpinner(color: Colors.blue, size: 80, strokeWidth: 8)),
               ),
             ),
