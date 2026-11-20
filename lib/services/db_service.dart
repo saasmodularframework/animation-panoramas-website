@@ -24,6 +24,8 @@ class Db {
       (await db).query('notes', orderBy: 'created DESC');
   static Future<void> addNote(String title, String body) async =>
       (await db).insert('notes', {'title': title, 'body': body, 'created': DateTime.now().millisecondsSinceEpoch});
+  static Future<void> updateNote(int id, String title, String body) async =>
+      (await db).update('notes', {'title': title, 'body': body}, where: 'id = ?', whereArgs: [id]);
   static Future<void> deleteNote(int id) async => (await db).delete('notes', where: 'id = ?', whereArgs: [id]);
 
   static Future<List<Map<String, Object?>>> bookings() async =>
