@@ -5,6 +5,9 @@ import '../widgets/telemetry_widgets.dart';
 import '../widgets/live_data_widgets.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
+import '../data/telemetry_sections.dart' show annualRainfallMm, winterWheat2018, california2015;
+import '../widgets/charts/data_canvas_chart.dart';
+import '../widgets/charts/drought_graphs.dart';
 
 class DroughtPage extends StatelessWidget {
   const DroughtPage({super.key});
@@ -54,10 +57,16 @@ class DroughtPage extends StatelessWidget {
                 ],
               ],
             ),
-            // California recovery is due to irrigation backed by groundwater.
+            
           ),
 
-          // Table 2 - rainfall bars
+          TableCard(
+            title: 'Graph: Soil moisture anomaly by region (flutter_graph_view)',
+            color: amber,
+            child: const SoilMoistureGraph(),
+          ),
+
+
           TableCard(
             title: 'Reference: Average annual rainfall (mm)',
             color: Colors.cyan.shade700,
@@ -78,7 +87,13 @@ class DroughtPage extends StatelessWidget {
             ),
           ),
 
-          // Table 3 - 2018 winter wheat statistics
+          TableCard(
+            title: 'Graph: Average annual rainfall (flutter_graph_view)',
+            color: Colors.cyan.shade700,
+            child: const RainfallGraph(),
+          ),
+
+   
           TableCard(
             title: 'Reference: Australia 2018 winter wheat, change vs last year',
             color: Colors.deepOrange.shade600,
@@ -97,7 +112,12 @@ class DroughtPage extends StatelessWidget {
             ),
           ),
 
-          // Table 4 - California extent + key figures
+          TableCard(
+            title: 'Graph: Australia 2018 winter wheat (flutter_graph_view)',
+            color: Colors.deepOrange.shade600,
+            child: const WinterWheatGraph(),
+          ),
+
           TableCard(
             title: 'Reference: California 2015 and key figures',
             color: Colors.purple.shade600,
@@ -117,6 +137,29 @@ class DroughtPage extends StatelessWidget {
                   barCell(64, 70, Colors.deepOrange, '-64% vs 5-yr avg')],
                 [cell('Almond yield, lb/acre (drought vs calm period)', bold: true, left: true),
                   cell('2,105 vs 2,215', bg: Colors.purple.shade100)],
+              ],
+            ),
+          ),
+          TableCard(
+            title: 'Graph: California 2015 and key figures (flutter_graph_view)',
+            color: Colors.purple.shade600,
+            child: const California2015Graph(),
+          ),
+
+          TableCard(
+            title: 'Canvas chart: choose data and how many points to plot',
+            color: amber,
+            child: DataCanvasChart(
+              fileName: 'drought',
+              initialColor: const Color(0xFFC62828),
+              series: [
+                ChartSeries('Annual rainfall (mm)', annualRainfallMm.entries.toList(), signed: false),
+                ChartSeries('Winter wheat, crop change (%)', [for (final w in winterWheat2018) MapEntry(w.$1, w.$2.toDouble())]),
+                ChartSeries('Winter wheat, area change (%)', [for (final w in winterWheat2018) MapEntry(w.$1, w.$3.toDouble())]),
+                ChartSeries('California 2015 (%)', [
+                  for (final (i, c) in california2015.take(4).indexed)
+                    MapEntry(const ['Drought Apr', 'Drought May', 'Irrigation', 'Wheat WC'][i], c.$2),
+                ]),
               ],
             ),
           ),

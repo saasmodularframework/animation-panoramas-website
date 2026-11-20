@@ -54,6 +54,7 @@ dependencies:
   web: ^1.0.0
   day_night_theme_flutter: ^0.0.5
   flutter_advanced_switch: ^3.2.2
+  animated_list_plus: ^0.5.2
 
 dependency_overrides:
   intl: ^0.20.3

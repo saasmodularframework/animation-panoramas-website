@@ -5,6 +5,9 @@ import '../widgets/telemetry_widgets.dart';
 import '../widgets/live_data_widgets.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
+import '../data/telemetry_sections.dart' show vegetationTrendRanking;
+import '../widgets/charts/data_canvas_chart.dart';
+import '../widgets/charts/vegetation_charts.dart';
 
 class VegetationPage extends StatelessWidget {
   const VegetationPage({super.key});
@@ -30,7 +33,7 @@ class VegetationPage extends StatelessWidget {
         icon: Icons.eco,
         color: green,
         children: [
-          // Live data first, then the static reference tables.
+
           LiveCards.vegetationNdvi(green),
           LiveCards.vegetationWaterSupply(green),
           LiveCards.vegetationWaterDemand(green),
@@ -54,6 +57,12 @@ class VegetationPage extends StatelessWidget {
                   ],
               ],
             ),
+          ),
+
+          TableCard(
+            title: 'Chart: Greenness index by continent (Syncfusion)',
+            color: green,
+            child: const GreennessLines(),
           ),
 
           TableCard(
@@ -85,6 +94,12 @@ class VegetationPage extends StatelessWidget {
           ),
 
           TableCard(
+            title: 'Chart: Trend ranking (Syncfusion)',
+            color: Colors.lime.shade800,
+            child: const TrendRankingBars(),
+          ),
+
+          TableCard(
             title: 'Reference: How to read the index',
             color: Colors.brown.shade600,
             child: gridTable(
@@ -97,6 +112,25 @@ class VegetationPage extends StatelessWidget {
                 [cell('0.1 - 0.3', bold: true), cell('Sparse grass or shrub', left: true), cell('', bg: Colors.yellow.shade700)],
                 [cell('0.3 - 0.6', bold: true), cell('Crops and moderate cover', left: true), cell('', bg: Colors.lightGreen)],
                 [cell('above 0.6', bold: true), cell('Dense, healthy forest', left: true), cell('', bg: Colors.green.shade900)],
+              ],
+            ),
+          ),
+          TableCard(
+            title: 'Chart: How to read the index (Syncfusion)',
+            color: Colors.brown.shade600,
+            child: const IndexCoverDonut(),
+          ),
+
+          TableCard(
+            title: 'Canvas chart: choose data and how many points to plot',
+            color: green,
+            child: DataCanvasChart(
+              fileName: 'vegetation',
+              initialColor: const Color(0xFF2E7D32),
+              series: [
+                for (final (i, d) in const ['2000s', '2010s', '2020s'].indexed)
+                  ChartSeries('Greenness index, $d', [for (final e in _data.entries) MapEntry(e.key, e.value[i])], signed: false),
+                ChartSeries('Change 2000s to 2020s', vegetationTrendRanking()),
               ],
             ),
           ),
