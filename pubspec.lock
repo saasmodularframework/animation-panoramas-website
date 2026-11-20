@@ -145,6 +145,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  day_night_theme_flutter:
+    dependency: "direct main"
+    description:
+      name: day_night_theme_flutter
+      sha256: "1a348d4f1bf8474669ba6fd6196b0401982289042416773b040a0d3bfde36882"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   dev_build:
     dependency: transitive
     description:
@@ -230,6 +238,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  flutter_advanced_switch:
+    dependency: "direct main"
+    description:
+      name: flutter_advanced_switch
+      sha256: "358b55e8b1f5280222a2fd96ac99a0d3c492818835d841f582a4b4c3e179c8af"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.2"
   flutter_breadcrumb:
     dependency: "direct main"
     description:
@@ -1102,7 +1118,7 @@ packages:
     source: hosted
     version: "1.0.3"
   web:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: web
       sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"

@@ -1,3 +1,4 @@
+import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -57,6 +58,35 @@ class _NotesPageState extends State<NotesPage> {
     }
   }
 
+  Widget _animated(Animation<double> animation, Widget child) => SizeTransition(
+        sizeFactor: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+        child: FadeTransition(opacity: animation, child: child),
+      );
+
+  Widget _card(Map<String, Object?> n, String lang, {bool interactive = true}) {
+    final when = DateTime.fromMillisecondsSinceEpoch(n['created'] as int);
+    return Card(
+      child: ListTile(
+        title: Text(n['title'] as String),
+        subtitle: Text('${n['body']}\n${timeago.format(when, locale: lang)}'), // timeago on every note
+        isThreeLine: true,
+        trailing: IconButton(
+          icon: const Icon(Icons.delete_outline),
+          onPressed: !interactive
+              ? null
+              : () async {
+                  try {
+                    await Db.deleteNote(n['id'] as int);
+                  } catch (e) {
+                    debugPrint('Delete note error: $e');
+                  }
+                  _load();
+                },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = Localizations.localeOf(context).languageCode;
@@ -68,26 +98,18 @@ class _NotesPageState extends State<NotesPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         floatingActionButton: Padding(padding: const EdgeInsets.only(bottom: 80), child: FloatingActionButton.extended(onPressed: _add, icon: const Icon(Icons.add), label: Text(context.tr('add')))),
-        body: ListView.builder(
+        // Rows are diffed by note id, so adding / deleting animates automatically.
+        body: ImplicitlyAnimatedList<Map<String, Object?>>(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 160),
-          itemCount: _rows.length,
-          itemBuilder: (_, i) {
-            final n = _rows[i];
-            final when = DateTime.fromMillisecondsSinceEpoch(n['created'] as int);
-            return Card(
-              child: ListTile(
-                title: Text(n['title'] as String),
-                subtitle: Text('${n['body']}\n${timeago.format(when, locale: lang)}'), // timeago on every note
-                isThreeLine: true,
-                trailing: IconButton(icon: const Icon(Icons.delete_outline), onPressed: () async {
-                  await Db.deleteNote(n['id'] as int);
-                  _load();
-                }),
-              ),
-            );
-          },
+          items: _rows,
+          areItemsTheSame: (a, b) => a['id'] == b['id'],
+          insertDuration: const Duration(milliseconds: 350),
+          removeDuration: const Duration(milliseconds: 300),
+          itemBuilder: (context, animation, n, i) => _animated(animation, _card(n, lang)),
+          removeItemBuilder: (context, animation, n) => _animated(animation, _card(n, lang, interactive: false)),
         ),
       ),
     );
   }
 }
+

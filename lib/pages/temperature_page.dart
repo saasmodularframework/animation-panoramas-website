@@ -34,8 +34,8 @@ class TemperaturePage extends StatelessWidget {
           TableCard(
             title: 'Temperature anomaly chart (canvas)',
             color: red,
-            note: '*2020s = 2020-2025 only. Base period 1951-1980. Pick a data set, choose how many points to plot, '
-                'then drag, rotate or draw on the canvas.',
+            note: '*2020s = 2020-2025 only. Base period 1951-1980. Pick a data set, chart type, line style, color and density, '
+                'then draw on the canvas and export it as a PNG (downloaded automatically).',
             child: const TemperatureCanvasChart(),
           ),
           SourceCard(dataset: temperatureDataset, color: red),

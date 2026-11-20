@@ -96,7 +96,7 @@ animation-panoramas-website/
 │   │   ├── time_spinner_block.dart           # Spinner time picker + duration wheel
 │   │   ├── share_bar.dart                    # LinkedIn / WhatsApp / mail sharing adapter
 │   │   ├── structured_table.dart             # Table cards, DataPageBody banner, styled cells
-│   │   └── climate_widgets.dart              # ClimateNavBar, SourceCard, DatasetTableCard, LiveTelemetryCard
+│   │   └── telemetry_widgets.dart              # ClimateNavBar, SourceCard, DatasetTableCard, LiveTelemetryCard
 │   ├── app_state.dart          # Global locale and theme-mode notifiers
 │   ├── pages_registry.dart     # Single page list feeding drawer, PDFs, RSS and sitemap
 │   └── main.dart               # App entry point, localization setup, bottom nav and scene viewer with metrics UI

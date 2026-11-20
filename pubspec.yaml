@@ -51,6 +51,9 @@ dependencies:
   syncfusion_flutter_charts: ^35.2.12
   flutter_graph_view: ^2.1.0
   flutter_advanced_canvas_editor: ^2.3.0
+  web: ^1.0.0
+  day_night_theme_flutter: ^0.0.5
+  flutter_advanced_switch: ^3.2.2
 
 dependency_overrides:
   intl: ^0.20.3
