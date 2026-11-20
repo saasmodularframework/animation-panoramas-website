@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../data/telemetry_datasets.dart';
-import '../widgets/telemetry_widgets.dart';
+import '../widgets/telemetry_carousel.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';
-
 
 class EarthSciencePage extends StatelessWidget {
   const EarthSciencePage({super.key});
@@ -22,10 +21,11 @@ class EarthSciencePage extends StatelessWidget {
         icon: Icons.public,
         color: blue,
         children: [
-          ClimateHubCard(slug: 'precipitation', icon: Icons.water_drop, color: Colors.blue.shade700, dataset: precipitationDataset),
-          ClimateHubCard(slug: 'temperature', icon: Icons.thermostat, color: Colors.red.shade700, dataset: temperatureDataset),
-          ClimateHubCard(slug: 'vegetation', icon: Icons.eco, color: Colors.green.shade700, dataset: vegetationDataset),
-          ClimateHubCard(slug: 'drought', icon: Icons.landscape, color: Colors.amber.shade800, dataset: droughtDataset),
+  
+          ClimateCarousel(slug: 'precipitation', title: precipitationDataset.title, icon: Icons.water_drop, color: Colors.blue.shade700),
+          ClimateCarousel(slug: 'temperature', title: temperatureDataset.title, icon: Icons.thermostat, color: Colors.red.shade700),
+          ClimateCarousel(slug: 'vegetation', title: vegetationDataset.title, icon: Icons.eco, color: Colors.green.shade700),
+          ClimateCarousel(slug: 'drought', title: droughtDataset.title, icon: Icons.landscape, color: Colors.amber.shade800),
         ],
       ),
     );
