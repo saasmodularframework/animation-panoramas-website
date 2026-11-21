@@ -21,7 +21,7 @@ An advanced, responsive 3D and 2D ecosystem and panorama explorer built with Flu
 - **Contextual Snackbar Notifications**: A `snack.dart` helper delivering contextual snackbar notifications across the app.
 - **Scene Video Preview Carousel**: A scene video carousel (`scene_video_carousel.dart`) with a platform I/O playback implementation (`scene_video_carousel_io.dart`) and a web/stub fallback (`scene_video_carousel_stub.dart`).
 - **Custom Canvas Chart Suite**: Native canvas-rendered visualizations — a generic canvas chart renderer (`data_canvas_chart.dart`), temperature series chart (`temperature_canvas_chart.dart`), precipitation charts (`precipitation_charts.dart`), vegetation index and cover charts (`vegetation_charts.dart`) and drought monitoring graphs (`drought_graphs.dart`).
-- **Centralized App Theme & Automatic Light/Dark Mode**: A single source-of-truth theme (`theme/app_theme.dart`) defining the Material light/dark palettes, and an automatic day/night switcher (`theme/day_evening_auto.dart`) that toggles the theme based on the time of day, complementing the manual light/dark switch.
+- **Centralized App Theme & Automatic Light/Dark Mode**: A single source-of-truth theme (`theme/app_theme.dart`) defining the Material light/dark palettes, and an automatic theme switcher (`theme/day_evening_auto.dart`) that toggles the theme based on the time of day, complementing the manual light/dark switch.
 
 ### NASA Earth Science & Satellite Data Pages
 
@@ -91,7 +91,7 @@ animation-panoramas-website/
 │   │   └── home_screen.dart    # Landing overview generated from the page registry
 │   ├── theme/
 │   │   ├── app_theme.dart                       # Central light/dark Material theme definitions
-│   │   └── day_evening_auto.dart                # Automatic day/night theme switching by time of day
+│   │   └── day_evening_auto.dart                # Automatic theme switching by time of day
 │   ├── services/
 │   │   ├── api_service.dart        # Legacy telemetry connectors
 │   │   ├── olap_service.dart       # Parallel.ai concurrent analytics

@@ -85,9 +85,10 @@ class TableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Card(
-
-      color: Colors.white,
+   
+      color: dark ? const Color(0xE61B2028) : Colors.white.withValues(alpha: 0.70),
       surfaceTintColor: Colors.transparent,
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
@@ -116,13 +117,21 @@ class TableCard extends StatelessWidget {
               ],
             ),
           ),
-          Padding(padding: const EdgeInsets.all(8), child: child),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: DefaultTextStyle.merge(
+              style: TextStyle(color: dark ? Colors.white70 : Colors.black87),
+              child: child,
+            ),
+          ),
           if (note != null)
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
               child: Text(note!,
-                  style: const TextStyle(
-                      fontSize: 12, fontStyle: FontStyle.italic, color: Colors.black54)),
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      color: dark ? Colors.white60 : Colors.black54)),
             ),
         ],
       ),
@@ -139,7 +148,7 @@ Widget gridTable({
 }) {
   return Table(
     defaultVerticalAlignment: TableCellVerticalAlignment.fill,
-    border: TableBorder.all(color: Colors.white, width: 1.5),
+    border: TableBorder.all(color: Colors.grey.withValues(alpha: 0.35), width: 1.5),
     columnWidths: {
       for (var i = 0; i < headers.length; i++) i: FlexColumnWidth(flex != null ? flex[i] : 1),
     },
@@ -161,7 +170,7 @@ Widget gridTable({
       for (var i = 0; i < rows.length; i++)
         TableRow(
           decoration: BoxDecoration(
-              color: i.isEven ? (zebra ?? Colors.grey.shade100) : Colors.white),
+              color: i.isEven ? (zebra ?? Colors.grey.withValues(alpha: 0.14)) : Colors.transparent),
           children: rows[i],
         ),
     ],
@@ -179,7 +188,7 @@ Widget cell(String text,
       textAlign: left ? TextAlign.left : TextAlign.center,
       style: TextStyle(
         fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
-        color: fg ?? (bg != null ? onColor(bg) : Colors.black87),
+        color: fg ?? (bg != null ? onColor(bg) : null),
       ),
     ),
   );

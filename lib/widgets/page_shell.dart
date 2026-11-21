@@ -119,7 +119,7 @@ class _PageShellState extends State<PageShell> {
           Expanded(child: AutoSizeText(widget.title, maxLines: 1, minFontSize: 12)),
         ]),
         actions: [
-
+          // Manual trigger for the SmartSnack messages (they also appear automatically on every page).
           IconButton(
             tooltip: context.tr('Notifications'),
             icon: const Icon(Icons.notifications_none),

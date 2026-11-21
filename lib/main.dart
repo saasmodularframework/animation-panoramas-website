@@ -1,15 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dropdown_alert/dropdown_alert.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:material_ui/material_ui.dart' as mui;
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'
     show databaseFactoryFfi, sqfliteFfiInit;
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:theme_toggle_animation/theme_toggle_animation.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'app_state.dart';
@@ -23,6 +26,8 @@ import 'theme/day_evening_auto.dart';
 import 'widgets/ecosystem_sprite_loader.dart';
 import 'widgets/footer.dart';
 import 'widgets/grafana_mcp_dashboard_widget.dart';
+import 'widgets/intro_overlay.dart';
+import 'widgets/scene_giffy_dialog.dart';
 import 'widgets/open_meteo_live_widget.dart';
 import 'widgets/page_shell.dart';
 import 'widgets/snack.dart';
@@ -54,7 +59,7 @@ class AppRoute {
 }
 
 const seo = SeoConfig(
-  baseUrl: baseUrl, // https://animation-panoramas-website.onrender.com
+  baseUrl: baseUrl,
   siteName: 'Animation Panoramas',
   description: 'Interactive ecosystem panoramas, videos, services and agenda.',
 );
@@ -232,7 +237,7 @@ Future<void> main() async {
   timeago.setLocaleMessages('hi', timeago.HiMessages());
   AppState.startAutoTheme();
   runApp(const EcosystemApp());
-  smartSnackDebugDemo(); // debug builds only
+  smartSnackDebugDemo();
 }
 
 class EcosystemApp extends StatelessWidget {
@@ -253,40 +258,62 @@ class EcosystemApp extends StatelessWidget {
       valueListenable: AppState.locale,
       builder: (_, locale, __) => ValueListenableBuilder<ThemeMode>(
         valueListenable: AppState.themeMode,
-        builder: (_, mode, __) => MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: seo.siteName,
-          locale: locale,
-          supportedLocales: AppStrings.supported,
-          localizationsDelegates: const [
-            AppStrings.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          builder: (context, child) {
-            final isDay = _resolveIsDay(context, mode);
-            return _GlobalGifBackground(
-              isDay: isDay,
-              child: SmartSnackHost(
-                child: Column(
+        builder: (_, mode, __) => ThemeToggleAnimation(
+     
+          currentTheme: mui.ThemeData(
+            brightness: mode == ThemeMode.dark ? Brightness.dark : Brightness.light,
+          ),
+          animationType: ThemeAnimationType.circle,
+          circleDirection: CircleAnimationDirection.fromWidget,
+          blurAmount: 2.0,
+          duration: const Duration(milliseconds: 750),
+          onToggle: () => AppState.setManual(
+              dark: AppState.themeMode.value != ThemeMode.dark),
+          builder: (context, toggle) {
+            AppState.toggleTheme = toggle;
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: seo.siteName,
+              locale: locale,
+              supportedLocales: AppStrings.supported,
+              localizationsDelegates: const [
+                AppStrings.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              builder: (context, child) {
+                final isDay = _resolveIsDay(context, mode);
+                return Stack(
                   children: [
-                    Expanded(child: child ?? const SizedBox.shrink()),
-                    const StickyCopyrightFooter(text: '© 2026'),
+                    _GlobalGifBackground(
+                      isDay: isDay,
+                      child: SmartSnackHost(
+                        child: Column(
+                          children: [
+                            Expanded(child: child ?? const SizedBox.shrink()),
+                            const StickyCopyrightFooter(text: '© 2026'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const IntroOverlay(),
+                    const DropdownAlert(), 
                   ],
-                ),
-              ),
+                );
+              },
+              navigatorObservers: [SmartSnackObserver()],
+              themeMode: mode,
+              theme: buildDayTheme(),
+              darkTheme: buildNightTheme(),
+              initialRoute: '/',
+              onGenerateRoute: _onGenerateRoute,
+              onGenerateInitialRoutes: (name) => [
+                _onGenerateRoute(RouteSettings(name: name)),
+              ],
             );
           },
-          navigatorObservers: [SmartSnackObserver()],
-          themeMode: mode,
-          theme: buildDayTheme(),
-          darkTheme: buildNightTheme(),
-          initialRoute: '/',
-          onGenerateRoute: _onGenerateRoute,
-          onGenerateInitialRoutes: (name) => [
-            _onGenerateRoute(RouteSettings(name: name)),
-          ],
+          child: const SizedBox.expand(),
         ),
       ),
     );
@@ -465,7 +492,7 @@ class _EcosystemHomeScreenState extends State<EcosystemHomeScreen> {
                 label: context.tr('more'),
                 icon: Icons.arrow_forward,
                 compact: true,
-                onPressed: () => openScene(context, ecosystem),
+                onPressed: () => openSceneWithGiffy(context, ecosystem),
               ),
             ]),
             const SizedBox(height: 4),

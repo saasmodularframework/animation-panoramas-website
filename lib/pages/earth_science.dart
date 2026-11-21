@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/telemetry_datasets.dart';
+import '../l10n/app_strings.dart';
 import '../widgets/telemetry_carousel.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/structured_table.dart';

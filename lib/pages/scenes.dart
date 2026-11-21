@@ -7,6 +7,7 @@ import '../l10n/app_strings.dart';
 import '../models/ecosystem.dart';
 import '../pages_registry.dart';
 import '../widgets/page_shell.dart';
+import '../widgets/scene_giffy_dialog.dart';
 import '../widgets/share_bar.dart';
 import '../widgets/textured_button.dart';
 
@@ -57,7 +58,7 @@ class _SceneCard extends StatelessWidget {
             child: Row(children: [
               Expanded(child: AutoSizeText(e.title, maxLines: 1, minFontSize: 11, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16))),
               const SizedBox(width: 8),
-              TexturedButton(label: context.tr('more'), compact: true, onPressed: () => openScene(context, e)),
+              TexturedButton(label: context.tr('more'), compact: true, onPressed: () => openSceneWithGiffy(context, e)),
             ]),
           ),
         ]),

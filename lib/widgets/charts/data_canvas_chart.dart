@@ -58,6 +58,11 @@ const _palette = <(String, Color)>[
 
 const _negativeColor = Color(0xFF3F51B5);
 
+// Theme-aware ink for the painter (set from the widget's build).
+Color _inkStrong = Colors.black87;
+Color _inkSoft = Colors.black54;
+Color _gridInk = Colors.black12;
+
 class _ChartStyle {
   final _ChartType type;
   final _LineStyle lineStyle;
@@ -97,20 +102,20 @@ class _ChartPainter extends CustomPainter {
     double yOf(double v) => plot.top + (hi - v) / span * plot.height;
 
     final grid = Paint()
-      ..color = Colors.black12
+      ..color = _gridInk
       ..strokeWidth = 1;
     for (var i = 0; i <= 4; i++) {
       final v = lo + span * i / 4;
       final y = yOf(v);
       canvas.drawLine(Offset(plot.left, y), Offset(plot.right, y), grid);
-      _text(canvas, v.toStringAsFixed(span < 0.2 ? 3 : (span < 2 ? 2 : (span < 20 ? 1 : 0))), Offset(plot.left - 6, y), 10, Colors.black54, FontWeight.w500, align: _A.right);
+      _text(canvas, v.toStringAsFixed(span < 0.2 ? 3 : (span < 2 ? 2 : (span < 20 ? 1 : 0))), Offset(plot.left - 6, y), 10, _inkSoft, FontWeight.w500, align: _A.right);
     }
     // zero line
     canvas.drawLine(
       Offset(plot.left, yOf(0)),
       Offset(plot.right, yOf(0)),
       Paint()
-        ..color = Colors.black54
+        ..color = _inkSoft
         ..strokeWidth = 1.4,
     );
 
@@ -127,7 +132,7 @@ class _ChartPainter extends CustomPainter {
     }
 
     for (var i = 0; i < n; i++) {
-      _text(canvas, pts[i].key, Offset(xOf(i), plot.bottom + 8), 10, Colors.black87, FontWeight.w600,
+      _text(canvas, pts[i].key, Offset(xOf(i), plot.bottom + 8), 10, _inkStrong, FontWeight.w600,
           align: _A.center, below: true, maxWidth: slot - 2);
     }
   }
@@ -216,7 +221,7 @@ class _ChartPainter extends CustomPainter {
   }
 
   void _value(Canvas canvas, double v, Offset at, {required bool above}) =>
-      _text(canvas, (signed && v >= 0 ? '+' : '') + v.toStringAsFixed(_vd), at, 10, Colors.black87, FontWeight.w700,
+      _text(canvas, (signed && v >= 0 ? '+' : '') + v.toStringAsFixed(_vd), at, 10, _inkStrong, FontWeight.w700,
           align: _A.center, below: !above);
 
   void _text(Canvas canvas, String s, Offset at, double size, Color color, FontWeight weight,
@@ -325,11 +330,26 @@ class _DataCanvasChartState extends State<DataCanvasChart> {
 
   Widget _label(String s) => Padding(
         padding: const EdgeInsets.only(top: 10, bottom: 4),
-        child: Text(s, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.black54)),
+        child: Text(s, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: _inkSoft)),
       );
+
+  bool? _dark;
+  void _syncTheme(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    _inkStrong = dark ? Colors.white : Colors.black87;
+    _inkSoft = dark ? Colors.white70 : Colors.black54;
+    _gridInk = dark ? Colors.white24 : Colors.black12;
+    if (_dark != null && _dark != dark) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _plot();
+      });
+    }
+    _dark = dark;
+  }
 
   @override
   Widget build(BuildContext context) {
+    _syncTheme(context);
     final total = _cur.points.length;
     final minCount = _minFor(_cur);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -448,7 +468,10 @@ class _DataCanvasChartState extends State<DataCanvasChart> {
         return Container(
           height: _canvasHeight,
           width: double.infinity,
-          decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black12)),
+          decoration: BoxDecoration(
+            color: _dark == true ? const Color(0xE61B2028) : Colors.white.withValues(alpha: 0.70),
+            border: Border.all(color: _dark == true ? Colors.white24 : Colors.black12),
+          ),
           child: CanvasWidget(controller: _controller),
         );
       }),
