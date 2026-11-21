@@ -8,6 +8,8 @@ class AppState {
   static final locale = ValueNotifier<Locale>(const Locale('en'));
   static final themeMode = ValueNotifier<ThemeMode>(ThemeMode.dark);
 
+  static VoidCallback? toggleTheme;
+
   static final manualTheme = ValueNotifier<bool>(false);
 
   static Timer? _timer;

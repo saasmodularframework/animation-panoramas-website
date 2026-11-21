@@ -11,6 +11,7 @@ import '../widgets/ecosystem_sprite_loader.dart';
 import '../widgets/grafana_mcp_dashboard_widget.dart';
 import '../widgets/open_meteo_live_widget.dart';
 import '../widgets/page_shell.dart';
+import '../widgets/scene_giffy_dialog.dart';
 import '../widgets/telemetry_observability_widget.dart';
 import '../widgets/textured_button.dart';
 
@@ -101,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                     style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white)),
               ),
               const SizedBox(width: 12),
-              TexturedButton(label: context.tr('more'), icon: Icons.arrow_forward, compact: true, onPressed: () => openScene(context, e)),
+              TexturedButton(label: context.tr('more'), icon: Icons.arrow_forward, compact: true, onPressed: () => openSceneWithGiffy(context, e)),
             ]),
             const SizedBox(height: 4),
             Text(e.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white70, height: 1.3)),

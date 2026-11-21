@@ -59,7 +59,7 @@ final List<PageInfo> appPages = [
 PageInfo pageBySlug(String s) => appPages.firstWhere((p) => p.slug == s);
 
 void openPage(BuildContext c, String slug) =>
-    Navigator.of(c, rootNavigator: true).pushNamed('/$slug'); // real URL: /<slug>
+    Navigator.of(c, rootNavigator: true).pushNamed('/$slug'); 
 
 void openScene(BuildContext c, Ecosystem e) =>
     Navigator.of(c, rootNavigator: true).pushNamed('/scene/${e.slug}');

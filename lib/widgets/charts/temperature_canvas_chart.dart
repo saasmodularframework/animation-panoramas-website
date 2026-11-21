@@ -36,7 +36,6 @@ extension on _LineStyle {
         _LineStyle.dashDot => 'Dash-dot',
       };
 
-  /// Alternating draw/gap lengths scaled by stroke width; null = continuous.
   List<double>? pattern(double w) => switch (this) {
         _LineStyle.solid => null,
         _LineStyle.dashed => [w * 4, w * 3],
@@ -57,7 +56,10 @@ const _palette = <(String, Color)>[
 
 const _negativeColor = Color(0xFF3F51B5);
 
-/// Everything the painter needs; kept separate so the chart is easy to restyle.
+Color _inkStrong = Colors.black87;
+Color _inkSoft = Colors.black54;
+Color _gridInk = Colors.black12;
+
 class _ChartStyle {
   final _ChartType type;
   final _LineStyle lineStyle;
@@ -90,20 +92,20 @@ class _ChartPainter extends CustomPainter {
     double yOf(double v) => plot.top + (hi - v) / span * plot.height;
 
     final grid = Paint()
-      ..color = Colors.black12
+      ..color = _gridInk
       ..strokeWidth = 1;
     for (var i = 0; i <= 4; i++) {
       final v = lo + span * i / 4;
       final y = yOf(v);
       canvas.drawLine(Offset(plot.left, y), Offset(plot.right, y), grid);
-      _text(canvas, v.toStringAsFixed(1), Offset(plot.left - 6, y), 10, Colors.black54, FontWeight.w500, align: _A.right);
+      _text(canvas, v.toStringAsFixed(1), Offset(plot.left - 6, y), 10, _inkSoft, FontWeight.w500, align: _A.right);
     }
-    // zero line
+  
     canvas.drawLine(
       Offset(plot.left, yOf(0)),
       Offset(plot.right, yOf(0)),
       Paint()
-        ..color = Colors.black54
+        ..color = _inkSoft
         ..strokeWidth = 1.4,
     );
 
@@ -120,7 +122,7 @@ class _ChartPainter extends CustomPainter {
     }
 
     for (var i = 0; i < n; i++) {
-      _text(canvas, pts[i].key, Offset(xOf(i), plot.bottom + 8), 10, Colors.black87, FontWeight.w600,
+      _text(canvas, pts[i].key, Offset(xOf(i), plot.bottom + 8), 10, _inkStrong, FontWeight.w600,
           align: _A.center, below: true);
     }
   }
@@ -209,7 +211,7 @@ class _ChartPainter extends CustomPainter {
   }
 
   void _value(Canvas canvas, double v, Offset at, {required bool above}) =>
-      _text(canvas, (v >= 0 ? '+' : '') + v.toStringAsFixed(2), at, 10, Colors.black87, FontWeight.w700,
+      _text(canvas, (v >= 0 ? '+' : '') + v.toStringAsFixed(2), at, 10, _inkStrong, FontWeight.w700,
           align: _A.center, below: !above);
 
   void _text(Canvas canvas, String s, Offset at, double size, Color color, FontWeight weight,
@@ -251,7 +253,6 @@ class _TemperatureCanvasChartState extends State<TemperatureCanvasChart> {
   double _width = 0;
   bool _drawing = false, _erasing = false;
 
-  // --- style options ---
   _ChartType _type = _ChartType.bars;
   _LineStyle _lineStyle = _LineStyle.solid;
   Color _color = _palette.first.$2;
@@ -316,11 +317,26 @@ class _TemperatureCanvasChartState extends State<TemperatureCanvasChart> {
 
   Widget _label(String s) => Padding(
         padding: const EdgeInsets.only(top: 10, bottom: 4),
-        child: Text(s, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.black54)),
+        child: Text(s, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: _inkSoft)),
       );
+
+  bool? _dark;
+  void _syncTheme(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    _inkStrong = dark ? Colors.white : Colors.black87;
+    _inkSoft = dark ? Colors.white70 : Colors.black54;
+    _gridInk = dark ? Colors.white24 : Colors.black12;
+    if (_dark != null && _dark != dark) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _plot();
+      });
+    }
+    _dark = dark;
+  }
 
   @override
   Widget build(BuildContext context) {
+    _syncTheme(context);
     final total = _cur.points.length;
     const minCount = 3;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -439,7 +455,10 @@ class _TemperatureCanvasChartState extends State<TemperatureCanvasChart> {
         return Container(
           height: _canvasHeight,
           width: double.infinity,
-          decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black12)),
+          decoration: BoxDecoration(
+            color: _dark == true ? const Color(0xE61B2028) : Colors.white.withValues(alpha: 0.70),
+            border: Border.all(color: _dark == true ? Colors.white24 : Colors.black12),
+          ),
           child: CanvasWidget(controller: _controller),
         );
       }),

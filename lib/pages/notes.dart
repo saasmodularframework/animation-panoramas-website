@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dropdown_alert/alert_controller.dart';
+import 'package:flutter_dropdown_alert/model/data_alert.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../l10n/app_strings.dart';
@@ -128,8 +130,10 @@ class _NotesPageState extends State<NotesPage> {
         }
       }
       await _load(highlightId: newestId);
+      AlertController.show('Note created', '"$title" was added to your notes.', TypeAlert.success);
     } catch (e) {
       debugPrint('Add note error: $e');
+      AlertController.show('Could not create note', 'Something went wrong while saving. Please try again.', TypeAlert.error);
       await _load();
     }
   }
@@ -146,7 +150,6 @@ class _NotesPageState extends State<NotesPage> {
     final updatedTitle = result['title'] as String;
     final updatedBody = result['body'] as String;
 
-    // Optimistic in-place update so text & card animations run immediately
     final updated = <String, Object?>{
       ...note,
       'title': updatedTitle,
@@ -162,8 +165,10 @@ class _NotesPageState extends State<NotesPage> {
 
     try {
       await Db.updateNote(id, updatedTitle, updatedBody);
+      AlertController.show('Note updated', '"$updatedTitle" was saved with your changes.', TypeAlert.success);
     } catch (e) {
       debugPrint('Update note error: $e');
+      AlertController.show('Could not update note', 'Your changes were not saved. Please try again.', TypeAlert.error);
     }
 
     await _load(highlightId: id);
@@ -175,10 +180,13 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Future<void> _delete(int id) async {
+    final removedTitle = '${_known[id]?['title'] ?? ''}';
     try {
       await Db.deleteNote(id);
+      AlertController.show('Note deleted', removedTitle.isEmpty ? 'The note was removed.' : '"$removedTitle" was removed.', TypeAlert.warning);
     } catch (e) {
       debugPrint('Delete note error: $e');
+      AlertController.show('Could not delete note', 'The note was not removed. Please try again.', TypeAlert.error);
     }
     await _load();
   }
@@ -196,7 +204,6 @@ class _NotesPageState extends State<NotesPage> {
 
   int _columnsFor(double width) => width < 480 ? 2 : (width < 800 ? 3 : 4);
 
-  /// Encodes row index + note IDs so row changes animate cleanly at the list level.
   List<(int, String)> _gridRows(int cols) => [
         for (var i = 0; i < _rows.length; i += cols)
           (
