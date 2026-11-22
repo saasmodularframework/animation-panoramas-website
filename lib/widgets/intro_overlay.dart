@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ecosystem_sprite_loader.dart';
 
-/// Full-screen intro shown only the first time the app is opened in this browser.
 class IntroOverlay extends StatefulWidget {
   const IntroOverlay({super.key});
 

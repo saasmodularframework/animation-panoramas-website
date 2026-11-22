@@ -243,6 +243,11 @@ Future<void> main() async {
 class EcosystemApp extends StatelessWidget {
   const EcosystemApp({super.key});
 
+  static final GlobalKey _appKey = GlobalKey(debugLabel: 'ecosystem_app');
+  static final GlobalKey<NavigatorState> _navKey =
+      GlobalKey<NavigatorState>(debugLabel: 'ecosystem_navigator');
+  static final SmartSnackObserver _snackObserver = SmartSnackObserver();
+
   bool _resolveIsDay(BuildContext context, ThemeMode mode) {
     return switch (mode) {
       ThemeMode.light => true,
@@ -259,7 +264,7 @@ class EcosystemApp extends StatelessWidget {
       builder: (_, locale, __) => ValueListenableBuilder<ThemeMode>(
         valueListenable: AppState.themeMode,
         builder: (_, mode, __) => ThemeToggleAnimation(
-     
+          // theme_toggle_animation 2.x wants material_ui's ThemeData (only brightness matters here).
           currentTheme: mui.ThemeData(
             brightness: mode == ThemeMode.dark ? Brightness.dark : Brightness.light,
           ),
@@ -272,6 +277,8 @@ class EcosystemApp extends StatelessWidget {
           builder: (context, toggle) {
             AppState.toggleTheme = toggle;
             return MaterialApp(
+              key: _appKey,
+              navigatorKey: _navKey,
               debugShowCheckedModeBanner: false,
               title: seo.siteName,
               locale: locale,
@@ -302,7 +309,7 @@ class EcosystemApp extends StatelessWidget {
                   ],
                 );
               },
-              navigatorObservers: [SmartSnackObserver()],
+              navigatorObservers: [_snackObserver],
               themeMode: mode,
               theme: buildDayTheme(),
               darkTheme: buildNightTheme(),
